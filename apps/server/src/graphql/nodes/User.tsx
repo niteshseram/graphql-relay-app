@@ -4,19 +4,12 @@ import decodeIDOrThrow from '../lib/decodeIDOrThrow.tsx';
 import encodeGlobalID from '../lib/encodeGlobalID.tsx';
 
 export const encodeUserID = (id: string) => encodeGlobalID('User', id);
-export const decodeUserID = (id: string) => decodeIDOrThrow('User', id);
+export const decodeUserID = (id: string) => decodeIDOrThrow('user', id);
 
 const MAX_RESULTS = 10;
 
 const User = builder.prismaNode('User', {
   fields: (t) => ({
-    caughtPokemon: t.relatedConnection('CaughtPokemon', {
-      cursor: 'id',
-      nullable: false,
-      query: {
-        orderBy: { caughtAt: 'asc' },
-      },
-    }),
     email: t.exposeString('email', {
       authScopes: (user) => ({ self: user.id }),
     }),
@@ -24,6 +17,13 @@ const User = builder.prismaNode('User', {
       authScopes: (user) => ({ self: user.id }),
     }),
     name: t.exposeString('name', { nullable: false }),
+    pokemons: t.relatedConnection('pokemonsCaught', {
+      cursor: 'id',
+      nullable: false,
+      query: {
+        orderBy: { caught_at: 'asc' },
+      },
+    }),
     role: t.exposeString('role', {
       authScopes: (user) => ({ self: user.id }),
       nullable: false,
@@ -33,22 +33,36 @@ const User = builder.prismaNode('User', {
   id: { field: 'id' },
 });
 
-export const UserConnection = builder.connectionObject({
+builder.connectionObject({
   name: 'UserConnection',
   type: User,
 });
 
 builder.queryFields((t) => ({
-  findUsers: t.prismaConnection({
+  user: t.prismaField({
+    args: { username: t.arg.string({ required: true }) },
+    authScopes: {
+      role: 'user',
+    },
+    resolve: (query, _, { username }) =>
+      prisma.user.findUnique({
+        ...query,
+        where: {
+          username,
+        },
+      }),
+    type: 'User',
+  }),
+  users: t.prismaConnection({
     args: {
-      name: t.arg.string({ required: true }),
+      name: t.arg.string({ required: false }),
     },
     authScopes: {
       role: 'user',
     },
     cursor: 'id',
     resolve: (query, _, { name }) => {
-      name = name.trim();
+      name = name?.trim() || '';
       return prisma.user.findMany({
         ...query,
         take: MAX_RESULTS,
@@ -73,20 +87,6 @@ builder.queryFields((t) => ({
             : undefined,
       });
     },
-    type: 'User',
-  }),
-  user: t.prismaField({
-    args: { username: t.arg.string({ required: true }) },
-    authScopes: {
-      role: 'user',
-    },
-    resolve: (query, _, { username }) =>
-      prisma.user.findUnique({
-        ...query,
-        where: {
-          username,
-        },
-      }),
     type: 'User',
   }),
   viewer: t.prismaField({

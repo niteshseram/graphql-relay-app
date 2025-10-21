@@ -53,6 +53,7 @@ const builder = new SchemaBuilder<PothosTypes>({
     clientMutationId: 'omit',
     cursorType: 'String',
     decodeGlobalID,
+    // @ts-ignore
     encodeGlobalID,
     nodesQueryOptions: false,
   },

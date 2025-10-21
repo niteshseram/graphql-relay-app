@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<13fd34080674b7577d59efc5d96dc413>>
+ * @generated SignedSource<<b1ba29d6d6a23c763e4eb07805f42882>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -73,15 +73,15 @@ return {
           {
             "alias": null,
             "args": null,
-            "concreteType": "UserCaughtPokemonConnection",
+            "concreteType": "UserPokemonsConnection",
             "kind": "LinkedField",
-            "name": "caughtPokemon",
+            "name": "pokemons",
             "plural": false,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "UserCaughtPokemonConnectionEdge",
+                "concreteType": "UserPokemonsConnectionEdge",
                 "kind": "LinkedField",
                 "name": "edges",
                 "plural": true,
@@ -144,12 +144,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d4cf5f9ecfe2a9db47467cf8616a006b",
+    "cacheID": "2c76ac627783b15616245d7e93b90a3f",
     "id": null,
     "metadata": {},
     "name": "pageRelayEntryPointQuery",
     "operationKind": "query",
-    "text": "query pageRelayEntryPointQuery {\n  viewer {\n    ...pageUserCard_user\n    id\n  }\n}\n\nfragment pageUserCard_user on User {\n  caughtPokemon {\n    edges {\n      node {\n        id\n        nickname\n        pokemon {\n          name\n          id\n        }\n        shiny\n      }\n    }\n  }\n}\n"
+    "text": "query pageRelayEntryPointQuery {\n  viewer {\n    ...pageUserCard_user\n    id\n  }\n}\n\nfragment pageUserCard_user on User {\n  pokemons {\n    edges {\n      node {\n        id\n        nickname\n        pokemon {\n          name\n          id\n        }\n        shiny\n      }\n    }\n  }\n}\n"
   }
 };
 })();

@@ -1,5 +1,5 @@
 export default function decodeGlobalID(globalID: string) {
-  const separator = globalID.indexOf('-');
+  const separator = globalID.indexOf('_');
   if (separator <= 0 || separator >= globalID.length - 1) {
     throw new Error(`decodeGlobalID: Invalid global ID '${globalID}'.`);
   }

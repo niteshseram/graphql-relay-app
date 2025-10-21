@@ -40,7 +40,7 @@ const UserCard = ({ user: userKey }: { user: pageUserCard_user$key }) => {
   const user = useFragment(
     graphql`
       fragment pageUserCard_user on User {
-        caughtPokemon {
+        pokemons {
           edges {
             node {
               id
@@ -61,10 +61,12 @@ const UserCard = ({ user: userKey }: { user: pageUserCard_user$key }) => {
     <div className="flex flex-col gap-1">
       <h2 className="text-lg font-bold">Pokémon Collection</h2>
       <div className="flex flex-col gap-2">
-        {user.caughtPokemon.edges?.filter(isPresent).map(({ node }) =>
+        {user.pokemons.edges?.filter(isPresent).map(({ node }) =>
           node ? (
             <div className="flex items-center gap-2" key={node.id}>
-              <span>{node.nickname}</span>
+              <span>
+                {node.nickname} / {node.id}
+              </span>
             </div>
           ) : null,
         )}

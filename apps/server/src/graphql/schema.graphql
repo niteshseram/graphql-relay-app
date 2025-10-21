@@ -35,53 +35,53 @@ type Pokemon implements Node {
   secondaryType: String
 }
 
-type Query {
-  findUsers(
-    after: String
-    before: String
-    first: Int
-    last: Int
-    name: String!
-  ): QueryFindUsersConnection @auth(role: "user")
-  node(id: ID!): Node
-  pokemon(id: ID!): Pokemon @auth(role: "user")
-  user(username: String!): User @auth(role: "user")
-  viewer: User
-}
-
-type QueryFindUsersConnection {
-  edges: [QueryFindUsersConnectionEdge]
+type PokemonConnection {
+  edges: [PokemonEdge]
   pageInfo: PageInfo!
 }
 
-type QueryFindUsersConnectionEdge {
+type PokemonEdge {
+  cursor: String!
+  node: Pokemon
+}
+
+type Query {
+  node(id: ID!): Node
+  pokemon(id: ID!): Pokemon @auth(role: "user")
+  pokemons(after: String, before: String, first: Int, last: Int, name: String): QueryPokemonsConnection
+  user(username: String!): User @auth(role: "user")
+  users(after: String, before: String, first: Int, last: Int, name: String): QueryUsersConnection @auth(role: "user")
+  viewer: User
+}
+
+type QueryPokemonsConnection {
+  edges: [QueryPokemonsConnectionEdge]
+  pageInfo: PageInfo!
+}
+
+type QueryPokemonsConnectionEdge {
+  cursor: String!
+  node: Pokemon
+}
+
+type QueryUsersConnection {
+  edges: [QueryUsersConnectionEdge]
+  pageInfo: PageInfo!
+}
+
+type QueryUsersConnectionEdge {
   cursor: String!
   node: User
 }
 
 type User implements Node {
-  caughtPokemon(
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): UserCaughtPokemonConnection!
   email: String @auth(self: true)
   id: ID!
   locale: String @auth(self: true)
   name: String!
+  pokemons(after: String, before: String, first: Int, last: Int): UserPokemonsConnection!
   role: String! @auth(self: true)
   username: String
-}
-
-type UserCaughtPokemonConnection {
-  edges: [UserCaughtPokemonConnectionEdge]
-  pageInfo: PageInfo!
-}
-
-type UserCaughtPokemonConnectionEdge {
-  cursor: String!
-  node: CaughtPokemon
 }
 
 type UserConnection {
@@ -92,4 +92,14 @@ type UserConnection {
 type UserEdge {
   cursor: String!
   node: User
+}
+
+type UserPokemonsConnection {
+  edges: [UserPokemonsConnectionEdge]
+  pageInfo: PageInfo!
+}
+
+type UserPokemonsConnectionEdge {
+  cursor: String!
+  node: CaughtPokemon
 }

@@ -29,20 +29,21 @@ model User {
   banExpires      DateTime?
   banned          Boolean?
   banReason       String?
-  CaughtPokemon   CaughtPokemon[]
-  createdAt       DateTime        @default(now())
+  createdAt       DateTime  @default(now())
   displayUsername String?
-  email           String          @unique
+  email           String    @unique
   emailVerified   Boolean
-  id              String          @unique @default(uuid(7))
+  id              String    @unique @default(cuid())
   image           String?
-  locale          String          @default("en_US")
+  locale          String    @default("en_US")
   name            String
   password        String?
-  role            String          @default("user")
-  sessions        Session[]
+  role            String    @default("user")
   updatedAt       DateTime
-  username        String?         @unique
+  username        String?   @unique
+
+  sessions       Session[]
+  pokemonsCaught CaughtPokemon[]
 
   @@index([id(sort: Asc)])
   @@map("user")
@@ -94,27 +95,29 @@ model Verification {
 }
 
 model Pokemon {
-  id            Int             @id @default(autoincrement())
-  CaughtPokemon CaughtPokemon[]
-  name          String          @unique
-  primaryType   String
-  secondaryType String?
+  id             Int             @id @default(autoincrement())
+  name           String          @unique
+  primary_type   String
+  secondary_type String?
+  caughtPokemon  CaughtPokemon[]
 
   @@index([id(sort: Asc)])
+  @@map("pokemon")
 }
 
 model CaughtPokemon {
-  id        String   @id @default(uuid(7))
-  caughtAt  DateTime @default(now())
-  nickname  String?
-  pokemon   Pokemon  @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
-  pokemonId Int
-  shiny     Boolean
+  id         String   @id @default(cuid())
+  caught_at  DateTime @default(now())
+  nickname   String?
+  pokemon    Pokemon  @relation(fields: [pokemon_id], references: [id], onDelete: Cascade)
+  pokemon_id Int
+  shiny      Boolean
   /// [PokemonStats]
-  stats     Json
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
+  stats      Json
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    String
 
-  @@index([userId])
-  @@index([pokemonId])
+  @@index([user_id])
+  @@index([pokemon_id])
+  @@map("caught_pokemon")
 }

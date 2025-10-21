@@ -7,8 +7,8 @@ declare global {
       defense: number;
       hp: number;
       level: number;
-      specialAttack: number;
-      specialDefense: number;
+      special_attack: number;
+      special_defense: number;
       speed: number;
     }>;
   }

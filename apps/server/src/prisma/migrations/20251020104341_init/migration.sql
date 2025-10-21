@@ -57,26 +57,26 @@ CREATE TABLE "verification" (
 );
 
 -- CreateTable
-CREATE TABLE "Pokemon" (
+CREATE TABLE "pokemon" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "primaryType" TEXT NOT NULL,
-    "secondaryType" TEXT,
+    "primary_type" TEXT NOT NULL,
+    "secondary_type" TEXT,
 
-    CONSTRAINT "Pokemon_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "pokemon_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "CaughtPokemon" (
+CREATE TABLE "caught_pokemon" (
     "id" TEXT NOT NULL,
-    "caughtAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "caught_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "nickname" TEXT,
-    "pokemonId" INTEGER NOT NULL,
+    "pokemon_id" INTEGER NOT NULL,
     "shiny" BOOLEAN NOT NULL,
     "stats" JSONB NOT NULL,
-    "userId" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
 
-    CONSTRAINT "CaughtPokemon_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "caught_pokemon_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -104,16 +104,16 @@ CREATE UNIQUE INDEX "account_id_key" ON "account"("id");
 CREATE UNIQUE INDEX "verification_id_key" ON "verification"("id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Pokemon_name_key" ON "Pokemon"("name");
+CREATE UNIQUE INDEX "pokemon_name_key" ON "pokemon"("name");
 
 -- CreateIndex
-CREATE INDEX "Pokemon_id_idx" ON "Pokemon"("id" ASC);
+CREATE INDEX "pokemon_id_idx" ON "pokemon"("id" ASC);
 
 -- CreateIndex
-CREATE INDEX "CaughtPokemon_userId_idx" ON "CaughtPokemon"("userId");
+CREATE INDEX "caught_pokemon_user_id_idx" ON "caught_pokemon"("user_id");
 
 -- CreateIndex
-CREATE INDEX "CaughtPokemon_pokemonId_idx" ON "CaughtPokemon"("pokemonId");
+CREATE INDEX "caught_pokemon_pokemon_id_idx" ON "caught_pokemon"("pokemon_id");
 
 -- AddForeignKey
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -122,7 +122,7 @@ ALTER TABLE "session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "account" ADD CONSTRAINT "account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "CaughtPokemon" ADD CONSTRAINT "CaughtPokemon_pokemonId_fkey" FOREIGN KEY ("pokemonId") REFERENCES "Pokemon"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "caught_pokemon" ADD CONSTRAINT "caught_pokemon_pokemon_id_fkey" FOREIGN KEY ("pokemon_id") REFERENCES "pokemon"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "CaughtPokemon" ADD CONSTRAINT "CaughtPokemon_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "caught_pokemon" ADD CONSTRAINT "caught_pokemon_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;

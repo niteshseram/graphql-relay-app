@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0dbdb9fe3dfec65e8e0975a2c88be947>>
+ * @generated SignedSource<<f0fbf0fa27fba087cdd4e781600dc6ce>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type pageUserCard_user$data = {
-  readonly caughtPokemon: {
+  readonly pokemons: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
@@ -39,15 +39,15 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
-      "concreteType": "UserCaughtPokemonConnection",
+      "concreteType": "UserPokemonsConnection",
       "kind": "LinkedField",
-      "name": "caughtPokemon",
+      "name": "pokemons",
       "plural": false,
       "selections": [
         {
           "alias": null,
           "args": null,
-          "concreteType": "UserCaughtPokemonConnectionEdge",
+          "concreteType": "UserPokemonsConnectionEdge",
           "kind": "LinkedField",
           "name": "edges",
           "plural": true,
@@ -113,6 +113,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "ba0f152cd89137139e98e48981ec4d84";
+(node as any).hash = "0386fc525999ac09236c9005fc3e8afb";
 
 export default node;

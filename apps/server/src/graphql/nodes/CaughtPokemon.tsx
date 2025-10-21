@@ -4,7 +4,7 @@ const CaughtPokemon = builder.prismaNode('CaughtPokemon', {
   fields: (t) => ({
     caughtAt: t.string({
       nullable: false,
-      resolve: ({ caughtAt }) => String(caughtAt.getTime()),
+      resolve: ({ caught_at }) => String(caught_at.getTime()),
     }),
     nickname: t.exposeString('nickname'),
     pokemon: t.relation('pokemon'),
