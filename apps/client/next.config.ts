@@ -4,8 +4,12 @@
  * @type {import('next').NextConfig}
  **/
 const nextConfig = {
-  experimental: {
-    optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
+  compiler: {
+    relay: {
+      src: './',
+      language: 'typescript',
+      artifactDirectory: './src/app/__generated__',
+    },
   },
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
   reactStrictMode: true,

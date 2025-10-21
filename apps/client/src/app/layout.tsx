@@ -1,5 +1,6 @@
 import './globals.css';
 import type { Metadata } from 'next';
+import RelayProvider from '~/components/relay/RelayProvider';
 
 export const metadata: Metadata = {
   description: 'Minimal, fast, sensible defaults.',
@@ -16,7 +17,9 @@ export default function RootLayout({
       <head>
         <meta content="#fff" name="theme-color" />
       </head>
-      <body>{children}</body>
+      <RelayProvider>
+        <body>{children}</body>
+      </RelayProvider>
     </html>
   );
 }

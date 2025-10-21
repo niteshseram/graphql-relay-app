@@ -128,3 +128,12 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
+# prisma 
+*/graphql/schemaImportMap.tsx
+*/prisma/pothos-types.ts
+*/prisma/prisma-client/
+
+# TypeScript build info
+tsconfig.tsbuildinfo
