@@ -1,0 +1,10 @@
+.enum_manifest.json
+.eslintcache
+.pnpm-debug.log
+/node_modules/
+coverage/
+dist/
+source_strings.json
+src/translations
+tsconfig.tsbuildinfo
+vite.config.ts.timestamp-*
