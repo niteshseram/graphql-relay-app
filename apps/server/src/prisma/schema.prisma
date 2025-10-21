@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  binaryTargets       = ["native", "linux-musl"]
+  importFileExtension = "ts"
+  output              = "./prisma-client"
+  provider            = "prisma-client"
+}
+
+generator pothos {
+  provider     = "prisma-pothos-types"
+  clientOutput = "./prisma-client"
+  output       = "./pothos-types.ts"
+}
+
+generator json {
+  provider     = "prisma-json-types-generator"
+  clientOutput = "./prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  accounts        Account[]
+  banExpires      DateTime?
+  banned          Boolean?
+  banReason       String?
+  CaughtPokemon   CaughtPokemon[]
+  createdAt       DateTime        @default(now())
+  displayUsername String?
+  email           String          @unique
+  emailVerified   Boolean
+  id              String          @unique @default(uuid(7))
+  image           String?
+  locale          String          @default("en_US")
+  name            String
+  password        String?
+  role            String          @default("user")
+  sessions        Session[]
+  updatedAt       DateTime
+  username        String?         @unique
+
+  @@index([id(sort: Asc)])
+  @@map("user")
+}
+
+model Session {
+  id        String   @unique @default(uuid(7))
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @unique @default(uuid(7))
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @unique @default(uuid(7))
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+model Pokemon {
+  id            Int             @id @default(autoincrement())
+  CaughtPokemon CaughtPokemon[]
+  name          String          @unique
+  primaryType   String
+  secondaryType String?
+
+  @@index([id(sort: Asc)])
+}
+
+model CaughtPokemon {
+  id        String   @id @default(uuid(7))
+  caughtAt  DateTime @default(now())
+  nickname  String?
+  pokemon   Pokemon  @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
+  pokemonId Int
+  shiny     Boolean
+  /// [PokemonStats]
+  stats     Json
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  @@index([userId])
+  @@index([pokemonId])
+}
