@@ -5,7 +5,9 @@ import { SignOutButton } from '../components/auth/sign-out-button';
 import { authClient } from '../lib/auth-client';
 
 export default function Home() {
-  const { data: session } = authClient.useSession();
+  const { data: session 
+    
+  } = authClient.useSession();
 
   return (
     <div className="mx-auto max-w-md p-4">

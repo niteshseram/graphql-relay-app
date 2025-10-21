@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { authClient } from '../../lib/auth-client'
+import { authClient } from '../../lib/auth-client';
 
 export function SignOutButton() {
   return (
@@ -10,13 +10,13 @@ export function SignOutButton() {
         await authClient.signOut({
           fetchOptions: {
             onSuccess: () => {
-              window.location.href = '/'
+              window.location.href = '/';
             },
           },
-        })
+        });
       }}
     >
       Logout
     </button>
-  )
+  );
 }

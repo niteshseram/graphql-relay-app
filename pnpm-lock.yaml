@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@biomejs/biome':
+        specifier: ^2.2.6
+        version: 2.2.6
       turbo:
         specifier: ^2.5.8
         version: 2.5.8
@@ -27,9 +30,6 @@ importers:
         specifier: ^19.2.0
         version: 19.2.0(react@19.2.0)
     devDependencies:
-      '@biomejs/biome':
-        specifier: ^2.2.6
-        version: 2.2.6
       '@tailwindcss/postcss':
         specifier: ^4.1.14
         version: 4.1.15

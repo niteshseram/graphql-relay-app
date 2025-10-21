@@ -16,9 +16,7 @@ export default function RootLayout({
       <head>
         <meta content="#fff" name="theme-color" />
       </head>
-      <body>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
