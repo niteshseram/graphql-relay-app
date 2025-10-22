@@ -2,8 +2,8 @@
 import { useId } from 'react';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 import { useDebounceValue } from 'usehooks-ts';
-import type { PokemonsListingCard_pokemon$key } from '~/__generated__/PokemonsListingCard_pokemon.graphql';
-import type { PokemonsListingQuery$data } from '~/__generated__/PokemonsListingQuery.graphql';
+import type { pokemonListingCard_pokemon$key } from '~/__generated__/pokemonListingCard_pokemon.graphql';
+import type { pokemonListingQuery$data } from '~/__generated__/pokemonListingQuery.graphql';
 import { Input } from '~/components/ui/input';
 
 export default function PokemonsListing() {
@@ -11,16 +11,16 @@ export default function PokemonsListing() {
   const searchId = useId();
 
   const dataWithFilter = useLazyLoadQuery<{
-    response: PokemonsListingQuery$data;
+    response: pokemonListingQuery$data;
     variables: { name?: string | null };
   }>(
     graphql`
-      query PokemonsListingQuery($name: String) {
+      query pokemonListingQuery($name: String) {
         pokemons(first: 100, name: $name) {
           edges {
             node {
               id,
-              ...PokemonsListingCard_pokemon
+              ...pokemonListingCard_pokemon
             }
           }
         }
@@ -59,14 +59,10 @@ export default function PokemonsListing() {
   );
 }
 
-function PokemonCard({
-  pokemon,
-}: {
-  pokemon: PokemonsListingCard_pokemon$key;
-}) {
+function PokemonCard({ pokemon }: { pokemon: pokemonListingCard_pokemon$key }) {
   const data = useFragment(
     graphql`
-  fragment PokemonsListingCard_pokemon on Pokemon {
+  fragment pokemonListingCard_pokemon on Pokemon {
     name
     primaryType
     secondaryType

@@ -1,4 +1,4 @@
-import PokemonsListing from '~/components/PokemonsListing';
+import PokemonsListing from '~/components/pokemon-listing';
 export default function PokemonsPage() {
   return (
     <div className="mx-auto max-w-[1200px] p-4">

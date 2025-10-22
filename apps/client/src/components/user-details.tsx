@@ -4,16 +4,16 @@ import isPresent from '@nkzw/core/isPresent';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
-import type { UserDetailsRelayEntryPointQuery } from '~/__generated__/UserDetailsRelayEntryPointQuery.graphql';
-import type { UserDetailsUserCard_user$key } from '~/__generated__/UserDetailsUserCard_user.graphql';
+import type { userDetailsRelayEntryPointQuery } from '~/__generated__/userDetailsRelayEntryPointQuery.graphql';
+import type { userDetailsUserCard_user$key } from '~/__generated__/userDetailsUserCard_user.graphql';
 import PokemonCollection from './pokemon-collection';
 
 export default function UserDetails() {
-  const data = useLazyLoadQuery<UserDetailsRelayEntryPointQuery>(
+  const data = useLazyLoadQuery<userDetailsRelayEntryPointQuery>(
     graphql`
-      query UserDetailsRelayEntryPointQuery {
+      query userDetailsRelayEntryPointQuery {
         viewer {
-          ...UserDetailsUserCard_user
+          ...userDetailsUserCard_user
           ...pokemonCollection_user
         }
       }
@@ -72,10 +72,10 @@ function Badge({
   return <span className={cls}>{children}</span>;
 }
 
-function UserCard({ user: userKey }: { user: UserDetailsUserCard_user$key }) {
+function UserCard({ user: userKey }: { user: userDetailsUserCard_user$key }) {
   const user = useFragment(
     graphql`
-      fragment UserDetailsUserCard_user on User {
+      fragment userDetailsUserCard_user on User {
         name
         email
         pokemons {

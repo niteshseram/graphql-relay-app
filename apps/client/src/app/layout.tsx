@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import RelayProvider from '~/components/relay/RelayProvider';
+import RelayProvider from '~/components/relay/relay-provider';
 import { ThemeProvider } from '~/components/themes-provider';
 import './globals.css';
 import { AppSidebar } from '~/components/app-sidebar';
