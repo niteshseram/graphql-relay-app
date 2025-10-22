@@ -10,6 +10,9 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from '~/components/ui/sidebar';
 import { authClient } from '~/lib/auth-client';
 import { SignOutButton } from './auth/sign-out-button';
@@ -53,7 +56,18 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent className="flex-1">
         {isLoggedIn && data.viewer && (
-          <PokemonCollection user={data.viewer} variant="compact" />
+          <>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/">
+                    <span>Home</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+            <PokemonCollection user={data.viewer} variant="compact" />
+          </>
         )}
       </SidebarContent>
       <SidebarFooter>

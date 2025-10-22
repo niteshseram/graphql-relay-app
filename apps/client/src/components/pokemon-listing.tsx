@@ -1,10 +1,12 @@
 'use client';
+import Link from 'next/link';
 import { useId } from 'react';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 import { useDebounceValue } from 'usehooks-ts';
 import type { pokemonListingCard_pokemon$key } from '~/__generated__/pokemonListingCard_pokemon.graphql';
 import type { pokemonListingQuery$data } from '~/__generated__/pokemonListingQuery.graphql';
 import { Input } from '~/components/ui/input';
+import { cn } from '~/lib/utils';
 
 export default function PokemonsListing() {
   const [query, setQuery] = useDebounceValue('', 500);
@@ -63,6 +65,7 @@ function PokemonCard({ pokemon }: { pokemon: pokemonListingCard_pokemon$key }) {
   const data = useFragment(
     graphql`
   fragment pokemonListingCard_pokemon on Pokemon {
+    id,
     name
     primaryType
     secondaryType
@@ -72,7 +75,13 @@ function PokemonCard({ pokemon }: { pokemon: pokemonListingCard_pokemon$key }) {
   );
 
   return (
-    <div className="rounded-lg border p-4 shadow-sm bg-white dark:bg-neutral-900">
+    <div
+      className={cn(
+        'rounded-lg border p-4 shadow-sm bg-white dark:bg-neutral-900',
+        'relative',
+      )}
+    >
+      <Link href={`/pokemons/${data.id}`} className="absolute inset-0" />
       <div className="text-sm font-medium">{data.name ?? '—'}</div>
       <div className="mt-2 flex gap-2">
         <span className="inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-800 dark:bg-sky-900/30 dark:text-sky-300">
