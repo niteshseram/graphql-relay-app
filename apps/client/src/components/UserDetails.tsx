@@ -26,6 +26,10 @@ export default function UserDetails() {
     setIsHydrated(true);
   }, []);
 
+  if (!isHydrated) {
+    return null;
+  }
+
   if (!viewer || !isHydrated) {
     return (
       <div className="rounded-lg border border-gray-200 bg-white px-4 py-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">

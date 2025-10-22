@@ -1,10 +1,12 @@
 'use client';
 
-import { authClient } from '../../lib/auth-client';
+import { Button } from '~/components/ui/button';
+import { authClient } from '~/lib/auth-client';
 
 export function SignOutButton() {
   return (
-    <button
+    <Button
+      variant="secondary"
       type="button"
       onClick={async () => {
         await authClient.signOut({
@@ -17,6 +19,6 @@ export function SignOutButton() {
       }}
     >
       Logout
-    </button>
+    </Button>
   );
 }

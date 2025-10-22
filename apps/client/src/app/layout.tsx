@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import RelayProvider from '~/components/relay/RelayProvider';
 import { ThemeProvider } from '~/components/themes-provider';
 import './globals.css';
+import { AppSidebar } from '~/components/app-sidebar';
+import { SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar';
 
 export const metadata: Metadata = {
   description: 'Minimal, fast, sensible defaults.',
@@ -23,7 +25,15 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <div className="min-h-screen flex">
+              <SidebarProvider>
+                <AppSidebar />
+                <main className="flex-1">
+                  <SidebarTrigger />
+                  {children}
+                </main>
+              </SidebarProvider>
+            </div>
           </ThemeProvider>
         </body>
       </RelayProvider>
