@@ -1,9 +1,11 @@
 'use client';
 
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 import type { pokemonDetailPage_pokemon$key } from '~/__generated__/pokemonDetailPage_pokemon.graphql';
 import type { pokemonDetailPageQuery } from '~/__generated__/pokemonDetailPageQuery.graphql';
+import { Button } from '~/components/ui/button';
 import {
   Table,
   TableBody,
@@ -42,6 +44,7 @@ function PokemonDetails({
   const data = useFragment(
     graphql`
       fragment pokemonDetailPage_pokemon on Pokemon {
+        id
         name
         primaryType
         secondaryType
@@ -52,7 +55,12 @@ function PokemonDetails({
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Pokemon detail page</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Pokemon detail page</h1>
+        <Button asChild>
+          <Link href={`/pokemons/${data.id}/edit`}>Edit Pokemon</Link>
+        </Button>
+      </div>
       <Table className="border">
         <TableBody>
           <TableRow>

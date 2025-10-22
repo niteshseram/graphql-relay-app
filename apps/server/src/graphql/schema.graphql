@@ -15,6 +15,7 @@ type CaughtPokemon implements Node {
 
 type Mutation {
   updateName(name: String!): User @auth(role: "user")
+  updatePokemon(input: UpdatePokemonInput!): Pokemon @auth(role: "user")
 }
 
 interface Node {
@@ -72,6 +73,13 @@ type QueryUsersConnection {
 type QueryUsersConnectionEdge {
   cursor: String!
   node: User
+}
+
+input UpdatePokemonInput {
+  id: ID!
+  name: String!
+  primaryType: String!
+  secondaryType: String
 }
 
 type User implements Node {
