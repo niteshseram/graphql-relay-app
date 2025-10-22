@@ -28,7 +28,9 @@ export function AppSidebar() {
         <div className="text-lg font-semibold">Account</div>
         {isLoggedIn ? (
           <div className="flex flex-col gap-3">
-            <div className="text-sm">{session?.user.name}</div>
+            <Link className="text-sm" href="/me">
+              {session?.user.name}
+            </Link>
             <div className="text-xs text-gray-500">{session?.user.email}</div>
           </div>
         ) : (
