@@ -2,6 +2,9 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { graphql, useLazyLoadQuery } from 'react-relay';
+import type { appSidebarQuery } from '~/__generated__/appSidebarQuery.graphql';
+import { Button } from '~/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -10,7 +13,7 @@ import {
 } from '~/components/ui/sidebar';
 import { authClient } from '~/lib/auth-client';
 import { SignOutButton } from './auth/sign-out-button';
-import { Button } from './ui/button';
+import PokemonCollection from './pokemon-collection';
 
 export function AppSidebar() {
   const [isMounted, setIsMounted] = useState(false);
@@ -21,6 +24,17 @@ export function AppSidebar() {
   }, []);
 
   const isLoggedIn = session && isMounted;
+
+  const data = useLazyLoadQuery<appSidebarQuery>(
+    graphql`
+      query appSidebarQuery {
+        viewer {
+          ...pokemonCollection_user
+        }
+      }
+    `,
+    {},
+  );
 
   return (
     <Sidebar>
@@ -37,7 +51,11 @@ export function AppSidebar() {
           <div>No user is signed in</div>
         )}
       </SidebarHeader>
-      <SidebarContent className="flex-1"></SidebarContent>
+      <SidebarContent className="flex-1">
+        {isLoggedIn && data.viewer && (
+          <PokemonCollection user={data.viewer} variant="compact" />
+        )}
+      </SidebarContent>
       <SidebarFooter>
         {isLoggedIn ? (
           <SignOutButton />

@@ -6,13 +6,15 @@ import { useEffect, useState } from 'react';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 import type { UserDetailsRelayEntryPointQuery } from '~/__generated__/UserDetailsRelayEntryPointQuery.graphql';
 import type { UserDetailsUserCard_user$key } from '~/__generated__/UserDetailsUserCard_user.graphql';
+import PokemonCollection from './pokemon-collection';
 
 export default function UserDetails() {
-  const { viewer } = useLazyLoadQuery<UserDetailsRelayEntryPointQuery>(
+  const data = useLazyLoadQuery<UserDetailsRelayEntryPointQuery>(
     graphql`
       query UserDetailsRelayEntryPointQuery {
         viewer {
           ...UserDetailsUserCard_user
+          ...pokemonCollection_user
         }
       }
     `,
@@ -30,7 +32,7 @@ export default function UserDetails() {
     return null;
   }
 
-  if (!viewer || !isHydrated) {
+  if (!data.viewer || !isHydrated) {
     return (
       <div className="rounded-lg border border-gray-200 bg-white px-4 py-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
         <h3 className="text-lg font-semibold">No profile</h3>
@@ -41,7 +43,15 @@ export default function UserDetails() {
     );
   }
 
-  return <UserCard user={viewer} />;
+  return (
+    <div>
+      <UserCard user={data.viewer} />
+      <div className="border-t border-gray-100 py-4 dark:border-neutral-600">
+        <h3 className="mb-3 text-lg font-medium">Pokemon Collection</h3>
+        <PokemonCollection user={data.viewer} variant="default" />
+      </div>
+    </div>
+  );
 }
 
 function Badge({
@@ -72,11 +82,6 @@ function UserCard({ user: userKey }: { user: UserDetailsUserCard_user$key }) {
           edges {
             node {
               id
-              nickname
-              pokemon {
-                name
-              }
-              shiny
             }
           }
         }
@@ -86,46 +91,16 @@ function UserCard({ user: userKey }: { user: UserDetailsUserCard_user$key }) {
   );
 
   return (
-    <div>
-      <div className="flex items-center gap-6 py-6">
-        <div className="flex-1">
-          <h2 className="text-2xl font-semibold">{user.name}</h2>
-          <div className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
-            {user.email}
-          </div>
-          <div className="mt-3 flex items-center gap-2">
-            <Badge variant="accent">
-              {user.pokemons.edges?.filter(isPresent).length ?? 0} Pokémon
-            </Badge>
-          </div>
+    <div className="flex items-center gap-6 py-6">
+      <div className="flex-1">
+        <h2 className="text-2xl font-semibold">{user.name}</h2>
+        <div className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
+          {user.email}
         </div>
-      </div>
-
-      <div className="border-t border-gray-100 py-4 dark:border-neutral-600">
-        <h3 className="mb-3 text-lg font-medium">Pokemon Collection</h3>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {user.pokemons.edges?.filter(isPresent).map(({ node }) =>
-            node ? (
-              <div
-                key={node.id}
-                className="flex items-center justify-between rounded-lg border border-transparent bg-neutral-50 px-4 py-3 shadow-sm dark:bg-neutral-800/30"
-              >
-                <div>
-                  <div className="text-sm font-semibold">{node.nickname}</div>
-                  <div className="mt-0.5 text-xs text-neutral-100 dark:text-neutral-400">
-                    {node.pokemon?.name}
-                  </div>
-                </div>
-                <div>
-                  {node.shiny ? (
-                    <span className="ml-4 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300">
-                      ✨ Shiny
-                    </span>
-                  ) : null}
-                </div>
-              </div>
-            ) : null,
-          )}
+        <div className="mt-3 flex items-center gap-2">
+          <Badge variant="accent">
+            {user.pokemons.edges?.filter(isPresent).length ?? 0} Pokémon
+          </Badge>
         </div>
       </div>
     </div>
