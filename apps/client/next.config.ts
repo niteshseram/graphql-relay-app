@@ -8,7 +8,7 @@ const nextConfig = {
     relay: {
       src: './',
       language: 'typescript',
-      artifactDirectory: './src/app/__generated__',
+      artifactDirectory: './src/__generated__',
     },
   },
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],

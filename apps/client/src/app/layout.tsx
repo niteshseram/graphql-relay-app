@@ -1,6 +1,7 @@
-import './globals.css';
 import type { Metadata } from 'next';
 import RelayProvider from '~/components/relay/RelayProvider';
+import { ThemeProvider } from '~/components/themes-provider';
+import './globals.css';
 
 export const metadata: Metadata = {
   description: 'Minimal, fast, sensible defaults.',
@@ -13,12 +14,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <meta content="#fff" name="theme-color" />
-      </head>
+    <html lang="en" suppressHydrationWarning>
       <RelayProvider>
-        <body>{children}</body>
+        <body>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </body>
       </RelayProvider>
     </html>
   );

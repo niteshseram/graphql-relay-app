@@ -10,10 +10,10 @@
   "scripts": {
     "build": "relay-compiler --validate && next build --turbopack",
     "check": "npm run tc && npm run lint",
-    "dev": "mkdir -p __generated__ && concurrently \"relay-compiler --watch\" \"next dev --turbopack\"",
+    "dev": "mkdir -p src/__generated__ && concurrently \"relay-compiler --watch\" \"next dev --turbopack\"",
     "format": "biome format --write .",
     "lint": "biome lint src --write",
-    "relay": "relay-compiler"
+    "relay": "mkdir -p src/__generated__ && relay-compiler"
   },
   "browserslist": [
     ">0.2%",
@@ -27,6 +27,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.546.0",
     "next": "^15.5.6",
+    "next-themes": "^0.4.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-relay": "^20.1.1",
