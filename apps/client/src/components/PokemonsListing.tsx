@@ -1,7 +1,8 @@
 'use client';
 import { useId } from 'react';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 import { useDebounceValue } from 'usehooks-ts';
+import type { PokemonsListingCard_pokemon$key } from '~/__generated__/PokemonsListingCard_pokemon.graphql';
 import type { PokemonsListingQuery$data } from '~/__generated__/PokemonsListingQuery.graphql';
 import { Input } from '~/components/ui/input';
 
@@ -18,10 +19,8 @@ export default function PokemonsListing() {
         pokemons(first: 100, name: $name) {
           edges {
             node {
-              id
-              name
-              primaryType
-              secondaryType
+              id,
+              ...PokemonsListingCard_pokemon
             }
           }
         }
@@ -63,23 +62,29 @@ export default function PokemonsListing() {
 function PokemonCard({
   pokemon,
 }: {
-  pokemon: {
-    id: string;
-    name?: string;
-    primaryType: string;
-    secondaryType?: string | null;
-  };
+  pokemon: PokemonsListingCard_pokemon$key;
 }) {
+  const data = useFragment(
+    graphql`
+  fragment PokemonsListingCard_pokemon on Pokemon {
+    name
+    primaryType
+    secondaryType
+  }
+`,
+    pokemon,
+  );
+
   return (
     <div className="rounded-lg border p-4 shadow-sm bg-white dark:bg-neutral-900">
-      <div className="text-sm font-medium">{pokemon.name ?? '—'}</div>
+      <div className="text-sm font-medium">{data.name ?? '—'}</div>
       <div className="mt-2 flex gap-2">
         <span className="inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-800 dark:bg-sky-900/30 dark:text-sky-300">
-          {pokemon.primaryType}
+          {data.primaryType}
         </span>
-        {pokemon.secondaryType ? (
+        {data.secondaryType ? (
           <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/20 dark:text-amber-300">
-            {pokemon.secondaryType}
+            {data.secondaryType}
           </span>
         ) : null}
       </div>
