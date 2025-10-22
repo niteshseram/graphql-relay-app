@@ -1,38 +1,60 @@
 'use client';
+import { useId } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import type { PokemonsListingQuery } from '~/__generated__/PokemonsListingQuery.graphql';
+import { useDebounceValue } from 'usehooks-ts';
+import type { PokemonsListingQuery$data } from '~/__generated__/PokemonsListingQuery.graphql';
+import { Input } from '~/components/ui/input';
 
 export default function PokemonsListing() {
-  const data = useLazyLoadQuery<PokemonsListingQuery>(
+  const [query, setQuery] = useDebounceValue('', 500);
+  const searchId = useId();
+
+  const dataWithFilter = useLazyLoadQuery<{
+    response: PokemonsListingQuery$data;
+    variables: { name?: string | null };
+  }>(
     graphql`
-          query PokemonsListingQuery {
-            pokemons(first: 100) {
-              edges {
-                node {
-                    id
-                    name
-                    primaryType
-                    secondaryType
-                }
-              }
+      query PokemonsListingQuery($name: String) {
+        pokemons(first: 100, name: $name) {
+          edges {
+            node {
+              id
+              name
+              primaryType
+              secondaryType
             }
           }
-        `,
-    {},
+        }
+      }
+    `,
+    { name: query },
   );
 
-  const items = data.pokemons?.edges ?? [];
+  const filteredItems = dataWithFilter.pokemons?.edges ?? [];
 
-  return items.length === 0 ? (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 text-center dark:border-neutral-700 dark:bg-neutral-900">
-      No pokémons found.
-    </div>
-  ) : (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-      {items.map((edge) =>
-        edge?.node ? (
-          <PokemonCard key={edge.node.id} pokemon={edge.node} />
-        ) : null,
+  return (
+    <div>
+      <div className="mb-4">
+        <label htmlFor={searchId} className="sr-only">
+          Search pokemons
+        </label>
+        <Input
+          id={searchId}
+          type="search"
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search by name..."
+        />
+      </div>
+      {filteredItems.length === 0 ? (
+        <div className="p-6 text-center">No pokémons match your search.</div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {filteredItems.map((edge) =>
+            edge?.node ? (
+              <PokemonCard key={edge.node.id} pokemon={edge.node} />
+            ) : null,
+          )}
+        </div>
       )}
     </div>
   );
