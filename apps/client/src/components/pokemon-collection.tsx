@@ -18,6 +18,7 @@ export default function PokemonCollection({
   const data = useFragment(
     graphql`
   fragment pokemonCollection_user on User {
+    id
     pokemons(first: 100) {
       edges {
         node {
@@ -43,7 +44,12 @@ export default function PokemonCollection({
         <div className="space-y-2">
           {pokemons.map(({ node }) =>
             node ? (
-              <PokemonDetail key={node.id} pokemon={node} variant="compact" />
+              <PokemonDetail
+                key={node.id}
+                pokemon={node}
+                variant="compact"
+                userId={data.id}
+              />
             ) : null,
           )}
         </div>
@@ -55,7 +61,12 @@ export default function PokemonCollection({
     <div className="grid gap-3 sm:grid-cols-2">
       {pokemons.map(({ node }) =>
         node ? (
-          <PokemonDetail key={node.id} pokemon={node} variant="default" />
+          <PokemonDetail
+            key={node.id}
+            pokemon={node}
+            variant="default"
+            userId={data.id}
+          />
         ) : null,
       )}
     </div>
@@ -65,9 +76,11 @@ export default function PokemonCollection({
 function PokemonDetail({
   pokemon,
   variant = 'default',
+  userId,
 }: {
   variant?: 'default' | 'compact';
   pokemon: pokemonCollection_pokemon$key;
+  userId: string;
 }) {
   const data = useFragment(
     graphql`
@@ -86,57 +99,32 @@ function PokemonDetail({
   const [commitReleasePokemon, isReleasing] = useMutation(graphql`
     mutation pokemonCollectionReleaseMutation(
       $input: ReleasePokemonInput!
+      $connections: [ID!]!
     ) {
       releasePokemon(input: $input) {
-        success
+        deletedId @deleteEdge(connections: $connections)
       }
     }
   `);
 
   function onRelease() {
-    if (window.confirm('Are you sure you want to release this Pokemon?')) {
-      commitReleasePokemon({
-        variables: {
-          input: {
-            id: data.id,
-          },
-        },
-        updater: (store) => {
-          // Update the viewer's pokemons connection
-          const userPokemonsConnection = store
-            .getRoot()
-            .getLinkedRecord('viewer')
-            ?.getLinkedRecord('pokemons(first:100)');
-          const edges = userPokemonsConnection?.getLinkedRecords('edges');
-
-          if (edges && userPokemonsConnection) {
-            const newEdges = edges.filter(
-              (edge) => edge.getLinkedRecord('node')?.getDataID() !== data.id,
-            );
-
-            userPokemonsConnection.setLinkedRecords(newEdges, 'edges');
-          }
-
-          // Update the Pokemon's caughtPokemons connection
-          const caughtPokemon = store.get(data.id);
-          const pokemon = caughtPokemon?.getLinkedRecord('pokemon');
-          const caughtPokemonsConnection =
-            pokemon?.getLinkedRecord('caughtPokemons');
-          const caughtPokemonEdges =
-            caughtPokemonsConnection?.getLinkedRecords('edges');
-
-          if (caughtPokemonEdges && caughtPokemonsConnection) {
-            const newEdges = caughtPokemonEdges.filter(
-              (edge) => edge.getLinkedRecord('node')?.getDataID() !== data.id,
-            );
-            caughtPokemonsConnection.setLinkedRecords(newEdges, 'edges');
-          }
-
-          // Finally delete the caught Pokemon node
-          store.delete(data.id);
-        },
-      });
+    if (
+      !window.confirm(`Are you sure you want to release "${data.nickname}"?`)
+    ) {
+      return;
     }
+
+    // TODO: See if there's a better way to construct this connection id. This is NOT typesafe.
+    const connectionId = `client:${userId}:pokemons(first:100)`;
+
+    commitReleasePokemon({
+      variables: {
+        input: {
+          id: data.id,
+        },
+        connections: [connectionId],
+      },
+    });
   }
 
   return (

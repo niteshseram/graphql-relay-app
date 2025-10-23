@@ -8,12 +8,13 @@ const ReleasePokemonInput = builder.inputType('ReleasePokemonInput', {
   }),
 });
 
-const ReleasePokemonResult = builder.objectRef<{ success: boolean }>(
-  'ReleasePokemonResult',
-);
+const ReleasePokemonResult = builder.objectRef<{
+  deletedId: string;
+}>('ReleasePokemonResult');
+
 ReleasePokemonResult.implement({
   fields: (t) => ({
-    success: t.exposeBoolean('success', { nullable: false }),
+    deletedId: t.exposeID('deletedId', { nullable: true }),
   }),
 });
 
@@ -32,7 +33,6 @@ builder.mutationFields((t) => ({
       }
 
       const caughtPokemonId = String(decodeIDOrThrow('cp', id));
-      console.log(id, caughtPokemonId);
       const caughtPokemon = await prisma.caughtPokemon.findUnique({
         where: { id: caughtPokemonId },
         select: { user_id: true },
@@ -50,7 +50,8 @@ builder.mutationFields((t) => ({
         where: { id: caughtPokemonId },
       });
 
-      return { success: true };
+      // Return the original global id so Relay can use it with @deleteEdge
+      return { deletedId: id };
     },
   }),
 }));
