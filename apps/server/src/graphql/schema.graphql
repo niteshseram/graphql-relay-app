@@ -3,6 +3,11 @@ schema {
   mutation: Mutation
 }
 
+input CatchPokemonInput {
+  nickname: String
+  pokemonId: ID!
+}
+
 type CaughtPokemon implements Node {
   caughtAt: String!
   id: ID!
@@ -19,6 +24,7 @@ type ErrorResult {
 }
 
 type Mutation {
+  catchPokemon(input: CatchPokemonInput!): CaughtPokemon @auth(role: "user")
   releasePokemon(input: ReleasePokemonInput!): ReleasePokemonResult @auth(role: "user")
   updateName(name: String!): User @auth(role: "user")
   updatePokemon(input: UpdatePokemonInput!): Pokemon @auth(role: "user")

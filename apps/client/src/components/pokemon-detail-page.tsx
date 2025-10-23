@@ -13,6 +13,7 @@ import {
   TableHead,
   TableRow,
 } from '~/components/ui/table';
+import { useCatchPokemon } from '~/hooks/use-catch-pokemon';
 
 type Props = Readonly<{
   id: string;
@@ -52,14 +53,20 @@ function PokemonDetails({
     `,
     pokemon,
   );
+  const { catchPokemon, isCatching } = useCatchPokemon();
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Pokemon detail page</h1>
-        <Button asChild>
-          <Link href={`/pokemons/${data.id}/edit`}>Edit Pokemon</Link>
-        </Button>
+        <div className="flex gap-3">
+          <Button onClick={() => catchPokemon(data.id)} disabled={isCatching}>
+            {isCatching ? 'Catching...' : 'Catch'}
+          </Button>
+          <Button asChild variant="outline">
+            <Link href={`/pokemons/${data.id}/edit`}>Edit Pokemon</Link>
+          </Button>
+        </div>
       </div>
       <Table className="border">
         <TableBody>

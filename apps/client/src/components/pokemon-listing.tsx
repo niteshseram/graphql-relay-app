@@ -5,7 +5,9 @@ import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 import { useDebounceValue } from 'usehooks-ts';
 import type { pokemonListingCard_pokemon$key } from '~/__generated__/pokemonListingCard_pokemon.graphql';
 import type { pokemonListingQuery$data } from '~/__generated__/pokemonListingQuery.graphql';
+import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
+import { useCatchPokemon } from '~/hooks/use-catch-pokemon';
 import { cn } from '~/lib/utils';
 
 export default function PokemonsListing() {
@@ -73,6 +75,7 @@ function PokemonCard({ pokemon }: { pokemon: pokemonListingCard_pokemon$key }) {
 `,
     pokemon,
   );
+  const { catchPokemon, isCatching } = useCatchPokemon();
 
   return (
     <div
@@ -92,6 +95,17 @@ function PokemonCard({ pokemon }: { pokemon: pokemonListingCard_pokemon$key }) {
             {data.secondaryType}
           </span>
         ) : null}
+      </div>
+      <div className="mt-4 relative z-10">
+        <Button
+          onClick={() => catchPokemon(data.id)}
+          disabled={isCatching}
+          size="sm"
+          variant="outline"
+          className="w-full"
+        >
+          {isCatching ? 'Catching...' : 'Catch'}
+        </Button>
       </div>
     </div>
   );
