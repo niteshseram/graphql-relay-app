@@ -2,8 +2,6 @@ import prisma from '../../prisma/prisma.tsx';
 import builder from '../builder.tsx';
 import decodeIDOrThrow from '../lib/decodeIDOrThrow.tsx';
 
-const MAX_RESULTS = 10;
-
 const Pokemon = builder.prismaNode('Pokemon', {
   fields: (t) => ({
     name: t.exposeString('name', { nullable: false }),
@@ -55,7 +53,6 @@ builder.queryFields((t) => ({
       name = name?.trim() || '';
       return prisma.pokemon.findMany({
         ...query,
-        take: MAX_RESULTS,
         where:
           name.length >= 1
             ? {
@@ -65,6 +62,9 @@ builder.queryFields((t) => ({
                 },
               }
             : undefined,
+        orderBy: {
+          id: 'asc',
+        },
       });
     },
     type: 'Pokemon',

@@ -1,10 +1,16 @@
 'use client';
 import Link from 'next/link';
-import { useId } from 'react';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import { useEffect, useId, useRef } from 'react';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  usePaginationFragment,
+} from 'react-relay';
 import { useDebounceValue } from 'usehooks-ts';
 import type { pokemonListingCard_pokemon$key } from '~/__generated__/pokemonListingCard_pokemon.graphql';
-import type { pokemonListingQuery$data } from '~/__generated__/pokemonListingQuery.graphql';
+import type { pokemonListingContent_query$key } from '~/__generated__/pokemonListingContent_query.graphql';
+import type { pokemonListingQuery } from '~/__generated__/pokemonListingQuery.graphql';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { useCatchPokemon } from '~/hooks/use-catch-pokemon';
@@ -14,26 +20,14 @@ export default function PokemonsListing() {
   const [query, setQuery] = useDebounceValue('', 500);
   const searchId = useId();
 
-  const dataWithFilter = useLazyLoadQuery<{
-    response: pokemonListingQuery$data;
-    variables: { name?: string | null };
-  }>(
+  const queryRef = useLazyLoadQuery<pokemonListingQuery>(
     graphql`
       query pokemonListingQuery($name: String) {
-        pokemons(first: 100, name: $name) {
-          edges {
-            node {
-              id,
-              ...pokemonListingCard_pokemon
-            }
-          }
-        }
+        ...pokemonListingContent_query @arguments(name: $name)
       }
     `,
     { name: query },
   );
-
-  const filteredItems = dataWithFilter.pokemons?.edges ?? [];
 
   return (
     <div>
@@ -48,18 +42,105 @@ export default function PokemonsListing() {
           placeholder="Search by name..."
         />
       </div>
-      {filteredItems.length === 0 ? (
-        <div className="p-6 text-center">No pokémons match your search.</div>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {filteredItems.map((edge) =>
-            edge?.node ? (
-              <PokemonCard key={edge.node.id} pokemon={edge.node} />
-            ) : null,
-          )}
-        </div>
-      )}
+      <PokemonListingContent queryRef={queryRef} />
     </div>
+  );
+}
+
+type PokemonListingContentProps = Readonly<{
+  queryRef: pokemonListingContent_query$key;
+}>;
+
+function PokemonListingContent({ queryRef }: PokemonListingContentProps) {
+  const { data, hasNext, isLoadingNext, loadNext } = usePaginationFragment(
+    graphql`
+      fragment pokemonListingContent_query on Query 
+      @argumentDefinitions(
+        count: { type: "Int", defaultValue: 10 }
+        after: { type: "String" }
+        name: { type: "String" }
+      )
+      @refetchable(queryName: "PokemonListingPaginationQuery") {
+        pokemons(
+          first: $count
+          after: $after
+          name: $name
+        ) @connection(key: "PokemonListingContent_pokemons") {
+          edges {
+            node {
+              id
+              ...pokemonListingCard_pokemon
+            }
+          }
+        }
+      }
+    `,
+    queryRef,
+  );
+
+  const loadMoreRef = useRef(null);
+
+  useEffect(() => {
+    const currentRef = loadMoreRef.current;
+    if (!currentRef) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const firstEntry = entries[0];
+        if (firstEntry.isIntersecting && hasNext && !isLoadingNext) {
+          loadNext(10);
+        }
+      },
+      { threshold: 1.0 },
+    );
+
+    observer.observe(currentRef);
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [hasNext, isLoadingNext, loadNext]);
+
+  const edges = data.pokemons?.edges ?? [];
+
+  if (edges.length === 0) {
+    return (
+      <div className="p-6 text-center">No pokémons match your search.</div>
+    );
+  }
+
+  return (
+    <>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {edges.map((edge) =>
+          edge?.node ? (
+            <PokemonCard key={edge.node.id} pokemon={edge.node} />
+          ) : null,
+        )}
+      </div>
+      <div
+        ref={loadMoreRef}
+        className="h-16 mt-4 flex items-center justify-center"
+      >
+        {isLoadingNext ? (
+          <div className="text-center text-sm text-neutral-600">
+            Loading more Pokémon...
+          </div>
+        ) : hasNext ? (
+          <div className="text-center text-sm text-neutral-600">
+            Scroll to load more
+          </div>
+        ) : (
+          <div className="text-center text-sm text-neutral-600">
+            That's all for now!
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 

@@ -65,23 +65,23 @@ console.log(styleText('bold', '› Seeding database...'));
 try {
   console.log(styleText('bold', `Creating users`));
 
-  for (const data of users) {
-    const { user } = await auth.api.createUser({
-      body: data,
-    });
+  // for (const data of users) {
+  //   const { user } = await auth.api.createUser({
+  //     body: data,
+  //   });
 
-    console.log(`  Created user ${styleText('blue', user.name)}.`);
-  }
+  //   console.log(`  Created user ${styleText('blue', user.name)}.`);
+  // }
 
-  console.log(styleText('bold', `Inserting Pokémon`));
+  // console.log(styleText('bold', `Inserting Pokémon`));
 
-  for (const data of pokemon) {
-    const pokemon = await prisma.pokemon.create({
-      data,
-    });
+  // for (const data of pokemon) {
+  //   const pokemon = await prisma.pokemon.create({
+  //     data,
+  //   });
 
-    console.log(`  Inserted Pokémon ${styleText('blue', pokemon.name)}.`);
-  }
+  //   console.log(`  Inserted Pokémon ${styleText('blue', pokemon.name)}.`);
+  // }
 
   {
     console.log(styleText('bold', `Creating Caught Pokémon`));
