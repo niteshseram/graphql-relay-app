@@ -19,6 +19,7 @@ type ErrorResult {
 }
 
 type Mutation {
+  releasePokemon(input: ReleasePokemonInput!): ReleasePokemonResult @auth(role: "user")
   updateName(name: String!): User @auth(role: "user")
   updatePokemon(input: UpdatePokemonInput!): Pokemon @auth(role: "user")
   updateUser(input: UpdateUserInput!): UpdateUserResult @auth(role: "user")
@@ -79,6 +80,14 @@ type QueryUsersConnection {
 type QueryUsersConnectionEdge {
   cursor: String!
   node: User
+}
+
+input ReleasePokemonInput {
+  id: ID!
+}
+
+type ReleasePokemonResult {
+  success: Boolean!
 }
 
 input UpdatePokemonInput {

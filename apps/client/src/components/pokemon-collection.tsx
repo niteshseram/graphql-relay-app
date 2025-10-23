@@ -1,7 +1,7 @@
 'use client';
 
 import isPresent from '@nkzw/core/isPresent';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 import type { pokemonCollection_pokemon$key } from '~/__generated__/pokemonCollection_pokemon.graphql';
 import type { pokemonCollection_user$key } from '~/__generated__/pokemonCollection_user.graphql';
 import { cn } from '~/lib/utils';
@@ -21,7 +21,7 @@ export default function PokemonCollection({
     pokemons {
       edges {
         node {
-          id,
+          id
           ...pokemonCollection_pokemon
         }
       }
@@ -83,6 +83,45 @@ function PokemonDetail({
     pokemon,
   );
 
+  const [commitReleasePokemon, isReleasing] = useMutation(graphql`
+    mutation pokemonCollectionReleaseMutation(
+      $input: ReleasePokemonInput!
+    ) {
+      releasePokemon(input: $input) {
+        success
+      }
+    }
+  `);
+
+  function onRelease() {
+    if (window.confirm('Are you sure you want to release this Pokemon?')) {
+      commitReleasePokemon({
+        variables: {
+          input: {
+            id: data.id,
+          },
+        },
+        updater: (store) => {
+          const userPokemonsConnection = store
+            .getRoot()
+            .getLinkedRecord('viewer')
+            ?.getLinkedRecord('pokemons');
+          if (!userPokemonsConnection) {
+            return;
+          }
+          const edges = userPokemonsConnection.getLinkedRecords('edges');
+          if (edges) {
+            const newEdges = edges.filter((edge) => {
+              return edge.getLinkedRecord('node')?.getDataID() !== data.id;
+            });
+            userPokemonsConnection.setLinkedRecords(newEdges, 'edges');
+          }
+          store.delete(data.id);
+        },
+      });
+    }
+  }
+
   return (
     <div
       className={cn(
@@ -99,7 +138,7 @@ function PokemonDetail({
           </span>
         )}
       </div>
-      <div>
+      <div className="flex items-center gap-2">
         {data.shiny ? (
           variant === 'compact' ? (
             <span className="text-xs text-yellow-500">✨</span>
@@ -109,6 +148,20 @@ function PokemonDetail({
             </span>
           )
         ) : null}
+        {variant === 'default' && (
+          <button
+            type="button"
+            onClick={onRelease}
+            disabled={isReleasing}
+            className={cn(
+              'rounded px-2 py-1 text-xs text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/20',
+              'disabled:cursor-not-allowed disabled:opacity-50',
+              'text-xs',
+            )}
+          >
+            {isReleasing ? 'Releasing...' : 'Release'}
+          </button>
+        )}
       </div>
     </div>
   );
