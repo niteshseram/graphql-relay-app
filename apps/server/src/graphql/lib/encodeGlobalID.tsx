@@ -1,6 +1,6 @@
 const EntityToIDPrefix = {
   CaughtPokemon: 'cp',
-  Pokemon: 'pokemon',
+  Pokemon: 'pm',
   User: 'user',
 } as const;
 

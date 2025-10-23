@@ -24,7 +24,7 @@ builder.mutationFields((t) => ({
       if (!sessionUser) {
         throw new Error('not-authenticated');
       }
-      const pokemonId = Number(decodeIDOrThrow('pokemon', input.pokemonId));
+      const pokemonId = Number(decodeIDOrThrow('pm', input.pokemonId));
       const pokemon = await prisma.pokemon.findUnique({
         where: { id: pokemonId },
         select: { name: true },

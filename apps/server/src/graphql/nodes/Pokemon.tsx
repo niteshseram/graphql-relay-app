@@ -39,7 +39,7 @@ builder.queryFields((t) => ({
       prisma.pokemon.findUnique({
         ...query,
         where: {
-          id: Number(decodeIDOrThrow('pokemon', id)),
+          id: Number(decodeIDOrThrow('pm', id)),
         },
       }),
     type: 'Pokemon',

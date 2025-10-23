@@ -1,10 +1,13 @@
 import SchemaBuilder, {
   BasePlugin,
-  PothosOutputFieldConfig,
-  PothosTypeConfig,
-  SchemaTypes,
+  type PothosOutputFieldConfig,
+  type PothosTypeConfig,
+  type SchemaTypes,
 } from '@pothos/core';
-import { FieldAuthScopes, TypeAuthScopes } from '@pothos/plugin-scope-auth';
+import type {
+  FieldAuthScopes,
+  TypeAuthScopes,
+} from '@pothos/plugin-scope-auth';
 
 declare global {
   export namespace PothosSchemaTypes {

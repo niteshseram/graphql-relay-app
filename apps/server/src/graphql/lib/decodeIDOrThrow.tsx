@@ -8,14 +8,15 @@ export default function decodeIDOrThrow(
 ) {
   const { id, typename } = decodeGlobalID(globalID);
 
-  if (type === 'pokemon') {
-    // If type is 'pokemon', we expect a numeric ID
+  if (type === 'pm') {
+    // If type is pokemon, we expect a numeric ID
     const number = parseInteger(id);
     if (typename !== type || !number) {
       throw new Error(
         `Expected '${type}' but received '${typename}' with id '${id}'.`,
       );
     }
+
     return number;
   }
 
@@ -25,5 +26,6 @@ export default function decodeIDOrThrow(
       `Expected '${type}' but received '${typename}' with id '${id}'.`,
     );
   }
+
   return id;
 }

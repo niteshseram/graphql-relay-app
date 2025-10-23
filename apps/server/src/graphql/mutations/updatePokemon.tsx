@@ -26,7 +26,7 @@ builder.mutationFields((t) => ({
       }
 
       const { id, name, primaryType, secondaryType } = input;
-      const pokemonId = decodeIDOrThrow('pokemon', id);
+      const pokemonId = decodeIDOrThrow('pm', id);
 
       return prisma.pokemon.update({
         ...query,
