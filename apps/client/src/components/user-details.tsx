@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 import type { userDetailsRelayEntryPointQuery } from '~/__generated__/userDetailsRelayEntryPointQuery.graphql';
 import type { userDetailsUserCard_user$key } from '~/__generated__/userDetailsUserCard_user.graphql';
+import { Button } from '~/components/ui/button';
 import PokemonCollection from './pokemon-collection';
 
 export default function UserDetails() {
@@ -48,7 +49,7 @@ export default function UserDetails() {
     <div>
       <UserCard user={data.viewer} />
       <div className="border-t border-gray-100 py-4 dark:border-neutral-600">
-        <h3 className="mb-3 text-lg font-medium">Pokemon Collection</h3>
+        <h2 className="mb-3 text-lg font-medium">Pokemon caught</h2>
         <PokemonCollection user={data.viewer} variant="default" />
       </div>
     </div>
@@ -98,12 +99,9 @@ function UserCard({ user: userKey }: { user: userDetailsUserCard_user$key }) {
       <div className="flex-1">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold">{user.name}</h2>
-          <Link
-            href="/me/edit"
-            className="text-sm text-muted-foreground hover:text-foreground"
-          >
-            Edit Profile
-          </Link>
+          <Button asChild variant="outline">
+            <Link href="/me/edit">Edit profile</Link>
+          </Button>
         </div>
         <div className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
           {user.email}

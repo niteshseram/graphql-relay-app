@@ -64,7 +64,7 @@ function PokemonDetails({
   const { catchPokemon, isCatching } = useCatchPokemon();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 py-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{data.name}</h1>
         <div className="flex gap-3">
@@ -72,7 +72,7 @@ function PokemonDetails({
             {isCatching ? 'Catching...' : 'Catch'}
           </Button>
           <Button asChild variant="outline">
-            <Link href={`/pokemons/${data.id}/edit`}>Edit Pokemon</Link>
+            <Link href={`/pokemons/${data.id}/edit`}>Edit</Link>
           </Button>
         </div>
       </div>

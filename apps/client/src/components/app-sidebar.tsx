@@ -11,7 +11,6 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from '~/components/ui/sidebar';
 import { authClient } from '~/lib/auth-client';
@@ -44,29 +43,13 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="p-4">
-        <div className="text-lg font-semibold">Account</div>
-        {isLoggedIn ? (
-          <Link
-            className="flex flex-col gap-1 border border-gray-800 rounded px-3 py-2 hover:bg-neutral-900 transition-colors"
-            href="/me"
-          >
-            <span className="text-sm">{data.viewer?.name}</span>
-            <div className="text-xs text-gray-500">{data.viewer?.email}</div>
-          </Link>
-        ) : (
-          <div>No user is signed in</div>
-        )}
+        <Link href="/" className="text-lg font-semibold hover:text-neutral-400">
+          Pokedex
+        </Link>
       </SidebarHeader>
       <SidebarContent className="flex-1 px-2">
         {isLoggedIn && data.viewer && (
           <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/">
-                  <span>Pokedex</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
             <SidebarMenuItem>
               <PokemonCollection user={data.viewer} variant="compact" />
             </SidebarMenuItem>
@@ -74,8 +57,18 @@ export function AppSidebar() {
         )}
       </SidebarContent>
       <SidebarFooter>
-        {isLoggedIn ? (
-          <SignOutButton />
+        {data.viewer ? (
+          <>
+            <Link
+              className="flex flex-col gap-1 border border-neutral-800 rounded px-2.5 py-2 hover:bg-neutral-800 transition-colors"
+              href="/me"
+            >
+              <span className="text-sm">{data.viewer?.name}</span>
+              <div className="text-xs text-gray-500">{data.viewer?.email}</div>
+            </Link>
+
+            <SignOutButton />
+          </>
         ) : (
           <Button variant="secondary" asChild={true}>
             <Link href="/login">Sign In</Link>

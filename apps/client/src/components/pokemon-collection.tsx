@@ -43,7 +43,7 @@ export default function PokemonCollection({
   if (variant === 'compact') {
     return (
       <div className="px-2">
-        <h3 className="mb-2 text-sm">My Pokémon</h3>
+        <h3 className="mb-2 text-sm">Pokémon caught</h3>
         <div className="space-y-2">
           {pokemons.map(({ node }) =>
             node ? (

@@ -6,8 +6,8 @@ import { Input } from '~/components/ui/input';
 import { authClient } from '~/lib/auth-client';
 
 export default function SignIn() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@nakazawa.dev');
+  const [password, setPassword] = useState('not-a-secure-password');
 
   async function signIn(event: FormEvent) {
     event.preventDefault();

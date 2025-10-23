@@ -33,6 +33,7 @@ builder.mutationFields((t) => ({
       if (!pokemon) {
         throw new Error('Pokemon not found');
       }
+
       return prisma.caughtPokemon.create({
         ...query,
         data: {
