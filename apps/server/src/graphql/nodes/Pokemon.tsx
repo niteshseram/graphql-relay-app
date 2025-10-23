@@ -9,6 +9,19 @@ const Pokemon = builder.prismaNode('Pokemon', {
     name: t.exposeString('name', { nullable: false }),
     primaryType: t.exposeString('primary_type', { nullable: false }),
     secondaryType: t.exposeString('secondary_type'),
+    caughtPokemons: t.relatedConnection('caughtPokemon', {
+      cursor: 'id',
+      nullable: false,
+      authScopes: {
+        role: 'user',
+      },
+      query: (_, context) => ({
+        where: {
+          user_id: context.sessionUser?.id,
+        },
+        orderBy: { caught_at: 'asc' },
+      }),
+    }),
   }),
   id: { field: 'id' },
 });
@@ -28,7 +41,7 @@ builder.queryFields((t) => ({
       prisma.pokemon.findUnique({
         ...query,
         where: {
-          id: decodeIDOrThrow('pokemon', id),
+          id: Number(decodeIDOrThrow('pokemon', id)),
         },
       }),
     type: 'Pokemon',

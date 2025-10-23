@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import type { pokemonDetailPage_caughtPokemon$key } from '~/__generated__/pokemonDetailPage_caughtPokemon.graphql';
 import type { pokemonDetailPage_pokemon$key } from '~/__generated__/pokemonDetailPage_pokemon.graphql';
 import type { pokemonDetailPageQuery } from '~/__generated__/pokemonDetailPageQuery.graphql';
 import { Button } from '~/components/ui/button';
@@ -49,6 +50,7 @@ function PokemonDetails({
         name
         primaryType
         secondaryType
+        ...pokemonDetailPage_caughtPokemon
       }
     `,
     pokemon,
@@ -96,6 +98,66 @@ function PokemonDetails({
           </TableRow>
         </TableBody>
       </Table>
+
+      <PokemonCaughtInstances pokemon={data} />
+    </div>
+  );
+}
+
+function PokemonCaughtInstances({
+  pokemon,
+}: {
+  pokemon: pokemonDetailPage_caughtPokemon$key;
+}) {
+  const data = useFragment(
+    graphql`
+      fragment pokemonDetailPage_caughtPokemon on Pokemon {
+        caughtPokemons {
+          edges {
+            node {
+              id
+              nickname
+              shiny
+              caughtAt
+            }
+          }
+        }
+      }
+    `,
+    pokemon,
+  );
+
+  if (!data.caughtPokemons?.edges || data.caughtPokemons?.edges?.length === 0) {
+    return null;
+  }
+  return (
+    <div className="space-y-3">
+      <h2 className="text-lg font-semibold">Caught Pokemon</h2>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {data.caughtPokemons.edges.map((edge) => {
+          if (!edge?.node) return null;
+          const pokemon = edge.node;
+          return (
+            <div
+              key={pokemon.id}
+              className="flex items-center justify-between rounded-lg border border-transparent bg-neutral-50 px-4 py-3 shadow-sm dark:bg-neutral-800/30"
+            >
+              <div className="text-sm">
+                <span className="font-semibold">{pokemon.nickname}</span>
+                <div className="text-xs text-neutral-500">
+                  Caught on{' '}
+                  {new Date(Number(pokemon.caughtAt)).toLocaleDateString()}
+                </div>
+              </div>
+              {pokemon.shiny && (
+                <span className="ml-4 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300">
+                  ✨ Shiny
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

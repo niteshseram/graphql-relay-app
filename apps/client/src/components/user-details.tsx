@@ -81,7 +81,7 @@ function UserCard({ user: userKey }: { user: userDetailsUserCard_user$key }) {
         name
         email
         username
-        pokemons {
+        pokemons(first: 100) {
           edges {
             node {
               id

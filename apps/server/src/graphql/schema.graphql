@@ -43,10 +43,21 @@ type PageInfo {
 }
 
 type Pokemon implements Node {
+  caughtPokemons(after: String, before: String, first: Int, last: Int): PokemonCaughtPokemonsConnection! @auth(role: "user")
   id: ID!
   name: String!
   primaryType: String!
   secondaryType: String
+}
+
+type PokemonCaughtPokemonsConnection {
+  edges: [PokemonCaughtPokemonsConnectionEdge]
+  pageInfo: PageInfo!
+}
+
+type PokemonCaughtPokemonsConnectionEdge {
+  cursor: String!
+  node: CaughtPokemon
 }
 
 type PokemonConnection {

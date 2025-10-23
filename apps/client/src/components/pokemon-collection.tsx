@@ -18,7 +18,7 @@ export default function PokemonCollection({
   const data = useFragment(
     graphql`
   fragment pokemonCollection_user on User {
-    pokemons {
+    pokemons(first: 100) {
       edges {
         node {
           id
@@ -102,20 +102,37 @@ function PokemonDetail({
           },
         },
         updater: (store) => {
+          // Update the viewer's pokemons connection
           const userPokemonsConnection = store
             .getRoot()
             .getLinkedRecord('viewer')
-            ?.getLinkedRecord('pokemons');
-          if (!userPokemonsConnection) {
-            return;
-          }
-          const edges = userPokemonsConnection.getLinkedRecords('edges');
-          if (edges) {
-            const newEdges = edges.filter((edge) => {
-              return edge.getLinkedRecord('node')?.getDataID() !== data.id;
-            });
+            ?.getLinkedRecord('pokemons(first:100)');
+          const edges = userPokemonsConnection?.getLinkedRecords('edges');
+
+          if (edges && userPokemonsConnection) {
+            const newEdges = edges.filter(
+              (edge) => edge.getLinkedRecord('node')?.getDataID() !== data.id,
+            );
+
             userPokemonsConnection.setLinkedRecords(newEdges, 'edges');
           }
+
+          // Update the Pokemon's caughtPokemons connection
+          const caughtPokemon = store.get(data.id);
+          const pokemon = caughtPokemon?.getLinkedRecord('pokemon');
+          const caughtPokemonsConnection =
+            pokemon?.getLinkedRecord('caughtPokemons');
+          const caughtPokemonEdges =
+            caughtPokemonsConnection?.getLinkedRecords('edges');
+
+          if (caughtPokemonEdges && caughtPokemonsConnection) {
+            const newEdges = caughtPokemonEdges.filter(
+              (edge) => edge.getLinkedRecord('node')?.getDataID() !== data.id,
+            );
+            caughtPokemonsConnection.setLinkedRecords(newEdges, 'edges');
+          }
+
+          // Finally delete the caught Pokemon node
           store.delete(data.id);
         },
       });
