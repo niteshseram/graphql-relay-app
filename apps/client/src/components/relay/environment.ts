@@ -75,10 +75,17 @@ function createNetwork() {
   return network;
 }
 
+const store = new Store(RecordSource.create());
+
+if (!IS_SERVER) {
+  // @ts-expect-error for debugging purposes
+  window.__RELAY_STORE__ = store;
+}
+
 function createEnvironment() {
   return new Environment({
     network: createNetwork(),
-    store: new Store(RecordSource.create()),
+    store,
     isServer: IS_SERVER,
   });
 }

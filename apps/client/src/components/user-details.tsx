@@ -95,7 +95,7 @@ function UserCard({ user: userKey }: { user: userDetailsUserCard_user$key }) {
   );
 
   return (
-    <div className="flex items-center justify-between gap-6 py-6">
+    <div className="flex items-center justify-between gap-6">
       <div className="flex-1">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold">{user.name}</h2>

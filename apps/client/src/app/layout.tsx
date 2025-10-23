@@ -29,8 +29,9 @@ export default function RootLayout({
             <div className="min-h-screen flex">
               <SidebarProvider>
                 <AppSidebar />
-                <SidebarTrigger />
-                <main className={cn('flex-1', 'mx-auto max-w-[1400px] p-4')}>
+                <main
+                  className={cn('flex-1', 'mx-auto max-w-[1400px] px-8 py-6')}
+                >
                   {children}
                 </main>
               </SidebarProvider>

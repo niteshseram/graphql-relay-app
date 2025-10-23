@@ -1,6 +1,7 @@
 'use client';
 
 import isPresent from '@nkzw/core/isPresent';
+import { X } from 'lucide-react';
 import Link from 'next/link';
 import { graphql, useFragment } from 'react-relay';
 import type { pokemonCollection_pokemon$key } from '~/__generated__/pokemonCollection_pokemon.graphql';
@@ -42,20 +43,17 @@ export default function PokemonCollection({
 
   if (variant === 'compact') {
     return (
-      <div className="px-2">
-        <h3 className="mb-2 text-sm">Pokémon caught</h3>
-        <div className="space-y-2">
-          {pokemons.map(({ node }) =>
-            node ? (
-              <PokemonDetail
-                key={node.id}
-                pokemon={node}
-                variant="compact"
-                userId={data.id}
-              />
-            ) : null,
-          )}
-        </div>
+      <div className="space-y-2">
+        {pokemons.map(({ node }) =>
+          node ? (
+            <PokemonDetail
+              key={node.id}
+              pokemon={node}
+              variant="compact"
+              userId={data.id}
+            />
+          ) : null,
+        )}
       </div>
     );
   }
@@ -114,35 +112,43 @@ function PokemonDetail({
         {data.pokemon?.name && (
           <span className="text-neutral-900 dark:text-neutral-500">
             {' '}
-            (
+            /{' '}
             <Link
               className="text-neutral-900 dark:text-neutral-500 hover:underline"
               href={`/pokemons/${data.pokemon.id}`}
             >
               {data.pokemon.name}
             </Link>
-            )
           </span>
         )}
-      </div>
-      <div className="flex items-center gap-2">
         {data.shiny ? (
           variant === 'compact' ? (
-            <span className="text-xs text-yellow-500">✨</span>
+            <span className="text-xs text-yellow-500"> ✨</span>
           ) : (
             <span className="ml-4 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300">
               ✨ Shiny
             </span>
           )
         ) : null}
-        {variant === 'default' && (
+      </div>
+      <div className="flex items-center gap-2">
+        {variant === 'default' ? (
           <Button
             variant="secondary"
             size="sm"
-            onClick={() => releasePokemon(data.id, userId)}
+            onClick={() => releasePokemon(data.id, userId, data.pokemon?.id)}
             disabled={isReleasing || !userId}
           >
             Release
+          </Button>
+        ) : (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => releasePokemon(data.id, userId, data.pokemon?.id)}
+            disabled={isReleasing || !userId}
+          >
+            <X size={16} />
           </Button>
         )}
       </div>

@@ -64,7 +64,7 @@ function PokemonDetails({
   const { catchPokemon, isCatching } = useCatchPokemon();
 
   return (
-    <div className="space-y-6 py-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{data.name}</h1>
         <div className="flex gap-3">
@@ -116,6 +116,7 @@ function PokemonCaughtInstances({
   const data = useFragment(
     graphql`
       fragment pokemonDetailPage_caughtPokemon on Pokemon {
+        id
         caughtPokemons {
           edges {
             node {
@@ -135,27 +136,43 @@ function PokemonCaughtInstances({
   if (!data.caughtPokemons?.edges || data.caughtPokemons?.edges?.length === 0) {
     return null;
   }
+
   return (
     <div className="space-y-3">
       <h2 className="text-lg font-semibold">Caught by you</h2>
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 lg:grid-cols-2">
         {data.caughtPokemons.edges.map((edge) => {
-          if (!edge?.node) return null;
-          const pokemon = edge.node;
+          if (!edge?.node) {
+            return null;
+          }
+
+          const caughtPokemon = edge.node;
           return (
             <div
-              key={pokemon.id}
+              key={caughtPokemon.id}
               className="flex items-center justify-between rounded-lg border border-transparent bg-neutral-50 px-4 py-3 shadow-sm dark:bg-neutral-800/30"
             >
               <div className="text-sm">
-                <span className="font-semibold">{pokemon.nickname}</span>
-                <div className="text-xs text-neutral-500">
+                <span className="flex gap-2 items-center">
+                  <span className="font-medium">{caughtPokemon.nickname}</span>{' '}
+                  <code className="text-xs text-neutral-500">
+                    {caughtPokemon.id}
+                  </code>
+                </span>
+                <div className="text-xs text-neutral-400 mt-1">
                   Caught on{' '}
-                  {new Date(Number(pokemon.caughtAt)).toLocaleDateString()}
+                  {new Date(Number(caughtPokemon.caughtAt)).toLocaleDateString(
+                    'en-US',
+                    {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    },
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {pokemon.shiny && (
+                {caughtPokemon.shiny && (
                   <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300">
                     ✨ Shiny
                   </span>
@@ -164,7 +181,9 @@ function PokemonCaughtInstances({
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => releasePokemon(pokemon.id, userId)}
+                    onClick={() =>
+                      releasePokemon(caughtPokemon.id, userId, data.id)
+                    }
                     disabled={isReleasing || !userId}
                   >
                     Release

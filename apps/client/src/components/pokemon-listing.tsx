@@ -166,7 +166,9 @@ function PokemonCard({ pokemon }: { pokemon: pokemonListingCard_pokemon$key }) {
       )}
     >
       <Link href={`/pokemons/${data.id}`} className="absolute inset-0" />
-      <div className="text-sm font-medium">{data.name ?? '—'}</div>
+      <div className="flex justify-between items-center">
+        {data.name} <code className="text-xs text-neutral-500">{data.id}</code>
+      </div>
       <div className="mt-2 flex gap-2">
         <span className="inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-800 dark:bg-sky-900/30 dark:text-sky-300">
           {data.primaryType}
