@@ -1,6 +1,7 @@
 'use client';
 
 import isPresent from '@nkzw/core/isPresent';
+import Link from 'next/link';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -76,8 +77,10 @@ function UserCard({ user: userKey }: { user: userDetailsUserCard_user$key }) {
   const user = useFragment(
     graphql`
       fragment userDetailsUserCard_user on User {
+        id
         name
         email
+        username
         pokemons {
           edges {
             node {
@@ -91,12 +94,25 @@ function UserCard({ user: userKey }: { user: userDetailsUserCard_user$key }) {
   );
 
   return (
-    <div className="flex items-center gap-6 py-6">
+    <div className="flex items-center justify-between gap-6 py-6">
       <div className="flex-1">
-        <h2 className="text-2xl font-semibold">{user.name}</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-semibold">{user.name}</h2>
+          <Link
+            href="/me/edit"
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            Edit Profile
+          </Link>
+        </div>
         <div className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
           {user.email}
         </div>
+        {user.username && (
+          <div className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">
+            @{user.username}
+          </div>
+        )}
         <div className="mt-3 flex items-center gap-2">
           <Badge variant="accent">
             {user.pokemons.edges?.filter(isPresent).length ?? 0} Pokémon

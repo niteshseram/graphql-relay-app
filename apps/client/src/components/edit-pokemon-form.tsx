@@ -105,7 +105,6 @@ export function EditPokemonForm({ pokemon }: Props) {
         },
         onCompleted: () => {
           router.push(`/pokemons/${data.id}`);
-          router.refresh();
         },
       });
     },

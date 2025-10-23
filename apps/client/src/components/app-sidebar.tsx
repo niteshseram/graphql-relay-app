@@ -32,6 +32,8 @@ export function AppSidebar() {
     graphql`
       query appSidebarQuery {
         viewer {
+          name,
+          email,
           ...pokemonCollection_user
         }
       }
@@ -46,9 +48,9 @@ export function AppSidebar() {
         {isLoggedIn ? (
           <div className="flex flex-col gap-3">
             <Link className="text-sm" href="/me">
-              {session?.user.name}
+              {data.viewer?.name}
             </Link>
-            <div className="text-xs text-gray-500">{session?.user.email}</div>
+            <div className="text-xs text-gray-500">{data.viewer?.email}</div>
           </div>
         ) : (
           <div>No user is signed in</div>

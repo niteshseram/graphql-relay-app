@@ -13,9 +13,15 @@ type CaughtPokemon implements Node {
   user: User
 }
 
+type ErrorResult {
+  code: String!
+  message: String!
+}
+
 type Mutation {
   updateName(name: String!): User @auth(role: "user")
   updatePokemon(input: UpdatePokemonInput!): Pokemon @auth(role: "user")
+  updateUser(input: UpdateUserInput!): UpdateUserResult @auth(role: "user")
 }
 
 interface Node {
@@ -81,6 +87,14 @@ input UpdatePokemonInput {
   primaryType: String!
   secondaryType: String
 }
+
+input UpdateUserInput {
+  id: ID!
+  name: String
+  username: String
+}
+
+union UpdateUserResult = ErrorResult | User
 
 type User implements Node {
   email: String @auth(self: true)
