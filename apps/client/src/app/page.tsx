@@ -1,8 +1,9 @@
 import PokemonsListing from '~/components/pokemon-listing';
+
 export default function PokemonsPage() {
   return (
     <div>
-      <h1 className="mb-4 text-2xl font-bold">Pokemon Listing</h1>
+      <h1 className="mb-4 text-2xl font-bold">Pokedex</h1>
       <PokemonsListing />
     </div>
   );

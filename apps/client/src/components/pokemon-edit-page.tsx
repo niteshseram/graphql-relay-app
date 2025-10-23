@@ -14,6 +14,7 @@ export default function PokemonEditPage({ id }: Props) {
     graphql`
       query pokemonEditPageQuery($id: ID!) {
         pokemon(id: $id) {
+          name
           ...editPokemonForm_pokemon
         }
       }
@@ -27,7 +28,7 @@ export default function PokemonEditPage({ id }: Props) {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Edit Pokemon</h1>
+      <h1 className="text-2xl font-bold">Edit {data.pokemon.name}</h1>
       <EditPokemonForm pokemon={data.pokemon} />
     </div>
   );

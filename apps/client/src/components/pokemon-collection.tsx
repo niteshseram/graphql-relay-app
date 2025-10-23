@@ -1,9 +1,12 @@
 'use client';
 
 import isPresent from '@nkzw/core/isPresent';
-import { graphql, useFragment, useMutation } from 'react-relay';
+import Link from 'next/link';
+import { graphql, useFragment } from 'react-relay';
 import type { pokemonCollection_pokemon$key } from '~/__generated__/pokemonCollection_pokemon.graphql';
 import type { pokemonCollection_user$key } from '~/__generated__/pokemonCollection_user.graphql';
+import { Button } from '~/components/ui/button';
+import { useReleasePokemon } from '~/hooks/use-release-pokemon';
 import { cn } from '~/lib/utils';
 
 type PokemonCollectionProps = {
@@ -40,7 +43,7 @@ export default function PokemonCollection({
   if (variant === 'compact') {
     return (
       <div className="px-2">
-        <h3 className="mb-2 text-sm font-semibold">My Pokémon</h3>
+        <h3 className="mb-2 text-sm">My Pokémon</h3>
         <div className="space-y-2">
           {pokemons.map(({ node }) =>
             node ? (
@@ -88,6 +91,7 @@ function PokemonDetail({
         id
         nickname
         pokemon {
+          id
           name
         }
         shiny
@@ -96,36 +100,7 @@ function PokemonDetail({
     pokemon,
   );
 
-  const [commitReleasePokemon, isReleasing] = useMutation(graphql`
-    mutation pokemonCollectionReleaseMutation(
-      $input: ReleasePokemonInput!
-      $connections: [ID!]!
-    ) {
-      releasePokemon(input: $input) {
-        deletedId @deleteEdge(connections: $connections)
-      }
-    }
-  `);
-
-  function onRelease() {
-    if (
-      !window.confirm(`Are you sure you want to release "${data.nickname}"?`)
-    ) {
-      return;
-    }
-
-    // TODO: See if there's a better way to construct this connection id. This is NOT typesafe.
-    const connectionId = `client:${userId}:pokemons(first:100)`;
-
-    commitReleasePokemon({
-      variables: {
-        input: {
-          id: data.id,
-        },
-        connections: [connectionId],
-      },
-    });
-  }
+  const { releasePokemon, isReleasing } = useReleasePokemon();
 
   return (
     <div
@@ -139,7 +114,14 @@ function PokemonDetail({
         {data.pokemon?.name && (
           <span className="text-neutral-900 dark:text-neutral-500">
             {' '}
-            ({data.pokemon.name})
+            (
+            <Link
+              className="text-neutral-900 dark:text-neutral-500 hover:underline"
+              href={`/pokemons/${data.pokemon.id}`}
+            >
+              {data.pokemon.name}
+            </Link>
+            )
           </span>
         )}
       </div>
@@ -154,18 +136,14 @@ function PokemonDetail({
           )
         ) : null}
         {variant === 'default' && (
-          <button
-            type="button"
-            onClick={onRelease}
-            disabled={isReleasing}
-            className={cn(
-              'rounded px-2 py-1 text-xs text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/20',
-              'disabled:cursor-not-allowed disabled:opacity-50',
-              'text-xs',
-            )}
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => releasePokemon(data.id, userId)}
+            disabled={isReleasing || !userId}
           >
-            {isReleasing ? 'Releasing...' : 'Release'}
-          </button>
+            Release
+          </Button>
         )}
       </div>
     </div>

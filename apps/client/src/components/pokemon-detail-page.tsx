@@ -15,6 +15,7 @@ import {
   TableRow,
 } from '~/components/ui/table';
 import { useCatchPokemon } from '~/hooks/use-catch-pokemon';
+import { useReleasePokemon } from '~/hooks/use-release-pokemon';
 
 type Props = Readonly<{
   id: string;
@@ -27,6 +28,9 @@ export default function PokemonDetailPage({ id }: Props) {
         pokemon(id: $id) {
           ...pokemonDetailPage_pokemon
         }
+        viewer {
+          id
+        }
       }
     `,
     { id },
@@ -35,13 +39,15 @@ export default function PokemonDetailPage({ id }: Props) {
     notFound();
   }
 
-  return <PokemonDetails pokemon={data.pokemon} />;
+  return <PokemonDetails pokemon={data.pokemon} userId={data.viewer?.id} />;
 }
 
 function PokemonDetails({
   pokemon,
+  userId,
 }: {
   pokemon: pokemonDetailPage_pokemon$key;
+  userId?: string;
 }) {
   const data = useFragment(
     graphql`
@@ -60,7 +66,7 @@ function PokemonDetails({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Pokemon detail page</h1>
+        <h1 className="text-2xl font-bold">{data.name}</h1>
         <div className="flex gap-3">
           <Button onClick={() => catchPokemon(data.id)} disabled={isCatching}>
             {isCatching ? 'Catching...' : 'Catch'}
@@ -72,10 +78,6 @@ function PokemonDetails({
       </div>
       <Table className="border">
         <TableBody>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableCell>{data.name}</TableCell>
-          </TableRow>
           <TableRow>
             <TableHead>Primary type</TableHead>
             <TableCell>
@@ -99,15 +101,17 @@ function PokemonDetails({
         </TableBody>
       </Table>
 
-      <PokemonCaughtInstances pokemon={data} />
+      <PokemonCaughtInstances pokemon={data} userId={userId} />
     </div>
   );
 }
 
 function PokemonCaughtInstances({
   pokemon,
+  userId,
 }: {
   pokemon: pokemonDetailPage_caughtPokemon$key;
+  userId?: string;
 }) {
   const data = useFragment(
     graphql`
@@ -126,13 +130,14 @@ function PokemonCaughtInstances({
     `,
     pokemon,
   );
+  const { releasePokemon, isReleasing } = useReleasePokemon();
 
   if (!data.caughtPokemons?.edges || data.caughtPokemons?.edges?.length === 0) {
     return null;
   }
   return (
     <div className="space-y-3">
-      <h2 className="text-lg font-semibold">Caught Pokemon</h2>
+      <h2 className="text-lg font-semibold">Caught by you</h2>
       <div className="grid gap-3 sm:grid-cols-2">
         {data.caughtPokemons.edges.map((edge) => {
           if (!edge?.node) return null;
@@ -149,11 +154,23 @@ function PokemonCaughtInstances({
                   {new Date(Number(pokemon.caughtAt)).toLocaleDateString()}
                 </div>
               </div>
-              {pokemon.shiny && (
-                <span className="ml-4 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300">
-                  ✨ Shiny
-                </span>
-              )}
+              <div className="flex items-center gap-2">
+                {pokemon.shiny && (
+                  <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300">
+                    ✨ Shiny
+                  </span>
+                )}
+                {userId && (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => releasePokemon(pokemon.id, userId)}
+                    disabled={isReleasing || !userId}
+                  >
+                    Release
+                  </Button>
+                )}
+              </div>
             </div>
           );
         })}

@@ -43,33 +43,34 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader className="p-4">
         <div className="text-lg font-semibold">Account</div>
         {isLoggedIn ? (
-          <div className="flex flex-col gap-3">
-            <Link className="text-sm" href="/me">
-              {data.viewer?.name}
-            </Link>
+          <Link
+            className="flex flex-col gap-1 border border-gray-800 rounded px-3 py-2 hover:bg-neutral-900 transition-colors"
+            href="/me"
+          >
+            <span className="text-sm">{data.viewer?.name}</span>
             <div className="text-xs text-gray-500">{data.viewer?.email}</div>
-          </div>
+          </Link>
         ) : (
           <div>No user is signed in</div>
         )}
       </SidebarHeader>
-      <SidebarContent className="flex-1">
+      <SidebarContent className="flex-1 px-2">
         {isLoggedIn && data.viewer && (
-          <>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/">
-                    <span>Home</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-            <PokemonCollection user={data.viewer} variant="compact" />
-          </>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/">
+                  <span>Pokedex</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <PokemonCollection user={data.viewer} variant="compact" />
+            </SidebarMenuItem>
+          </SidebarMenu>
         )}
       </SidebarContent>
       <SidebarFooter>
