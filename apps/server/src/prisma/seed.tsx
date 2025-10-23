@@ -1,7 +1,9 @@
 #!/usr/bin/env NODE_ENV=development node --no-warnings --experimental-specifier-resolution=node --loader ts-node/esm --env-file .env
+
 import { styleText } from 'node:util';
 import random from '@nkzw/core/random.js';
 import arrayShuffle from 'array-shuffle';
+import { names, uniqueNamesGenerator } from 'unique-names-generator';
 import { auth } from '../lib/auth.tsx';
 import { PrismaClient } from './prisma-client/client.ts';
 
@@ -58,6 +60,56 @@ const pokemon = new Set([
   { id: 23, name: 'Ekans', primary_type: 'Poison', secondary_type: null },
   { id: 24, name: 'Arbok', primary_type: 'Poison', secondary_type: null },
   { id: 25, name: 'Pikachu', primary_type: 'Electric', secondary_type: null },
+  { id: 26, name: 'Raichu', primary_type: 'Electric', secondary_type: null },
+  { id: 27, name: 'Sandshrew', primary_type: 'Ground', secondary_type: null },
+  { id: 28, name: 'Sandslash', primary_type: 'Ground', secondary_type: null },
+  { id: 29, name: 'Nidoran♀', primary_type: 'Poison', secondary_type: null },
+  { id: 30, name: 'Nidorina', primary_type: 'Poison', secondary_type: null },
+  {
+    id: 31,
+    name: 'Nidoqueen',
+    primary_type: 'Poison',
+    secondary_type: 'Ground',
+  },
+  { id: 32, name: 'Nidoran♂', primary_type: 'Poison', secondary_type: null },
+  { id: 33, name: 'Nidorino', primary_type: 'Poison', secondary_type: null },
+  {
+    id: 34,
+    name: 'Nidoking',
+    primary_type: 'Poison',
+    secondary_type: 'Ground',
+  },
+  { id: 35, name: 'Clefairy', primary_type: 'Fairy', secondary_type: null },
+  { id: 36, name: 'Clefable', primary_type: 'Fairy', secondary_type: null },
+  { id: 37, name: 'Vulpix', primary_type: 'Fire', secondary_type: null },
+  { id: 38, name: 'Ninetales', primary_type: 'Fire', secondary_type: null },
+  {
+    id: 39,
+    name: 'Jigglypuff',
+    primary_type: 'Normal',
+    secondary_type: 'Fairy',
+  },
+  {
+    id: 40,
+    name: 'Wigglytuff',
+    primary_type: 'Normal',
+    secondary_type: 'Fairy',
+  },
+  { id: 41, name: 'Zubat', primary_type: 'Poison', secondary_type: 'Flying' },
+  { id: 42, name: 'Golbat', primary_type: 'Poison', secondary_type: 'Flying' },
+  { id: 43, name: 'Oddish', primary_type: 'Grass', secondary_type: 'Poison' },
+  { id: 44, name: 'Gloom', primary_type: 'Grass', secondary_type: 'Poison' },
+  {
+    id: 45,
+    name: 'Vileplume',
+    primary_type: 'Grass',
+    secondary_type: 'Poison',
+  },
+  { id: 46, name: 'Paras', primary_type: 'Bug', secondary_type: 'Grass' },
+  { id: 47, name: 'Parasect', primary_type: 'Bug', secondary_type: 'Grass' },
+  { id: 48, name: 'Venonat', primary_type: 'Bug', secondary_type: 'Poison' },
+  { id: 49, name: 'Venomoth', primary_type: 'Bug', secondary_type: 'Poison' },
+  { id: 50, name: 'Diglett', primary_type: 'Ground', secondary_type: null },
 ] as const);
 
 console.log(styleText('bold', '› Seeding database...'));
@@ -65,23 +117,23 @@ console.log(styleText('bold', '› Seeding database...'));
 try {
   console.log(styleText('bold', `Creating users`));
 
-  // for (const data of users) {
-  //   const { user } = await auth.api.createUser({
-  //     body: data,
-  //   });
+  for (const data of users) {
+    const { user } = await auth.api.createUser({
+      body: data,
+    });
 
-  //   console.log(`  Created user ${styleText('blue', user.name)}.`);
-  // }
+    console.log(`  Created user ${styleText('blue', user.name)}.`);
+  }
 
-  // console.log(styleText('bold', `Inserting Pokémon`));
+  console.log(styleText('bold', `Inserting Pokémon`));
 
-  // for (const data of pokemon) {
-  //   const pokemon = await prisma.pokemon.create({
-  //     data,
-  //   });
+  for (const data of pokemon) {
+    const pokemon = await prisma.pokemon.create({
+      data,
+    });
 
-  //   console.log(`  Inserted Pokémon ${styleText('blue', pokemon.name)}.`);
-  // }
+    console.log(`  Inserted Pokémon ${styleText('blue', pokemon.name)}.`);
+  }
 
   {
     console.log(styleText('bold', `Creating Caught Pokémon`));
@@ -92,7 +144,11 @@ try {
       for (const poke of arrayShuffle(pokemon).slice(0, 10)) {
         await prisma.caughtPokemon.create({
           data: {
-            nickname: poke.name,
+            nickname: uniqueNamesGenerator({
+              dictionaries: [names],
+              separator: ' ',
+              style: 'capital',
+            }),
             pokemon: { connect: { id: poke.id } },
             shiny: random(0, 10) === 0,
             stats: {
