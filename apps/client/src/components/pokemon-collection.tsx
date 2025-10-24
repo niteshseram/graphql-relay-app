@@ -23,7 +23,7 @@ export default function PokemonCollection({
     graphql`
   fragment pokemonCollection_user on User {
     id
-    pokemons(first: 100) {
+    pokemons(first: 100) @connection(key: "pokemonCollection_user_pokemons") {
       edges {
         node {
           id

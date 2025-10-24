@@ -82,7 +82,7 @@ function UserCard({ user: userKey }: { user: userDetailsUserCard_user$key }) {
         name
         email
         username
-        pokemons(first: 100) {
+        pokemons(first: 100) @connection(key: "userDetailsUserCard_pokemons") {
           edges {
             node {
               id

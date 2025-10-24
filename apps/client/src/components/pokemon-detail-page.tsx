@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
-import type { pokemonDetailPage_caughtPokemon$key } from '~/__generated__/pokemonDetailPage_caughtPokemon.graphql';
 import type { pokemonDetailPage_pokemon$key } from '~/__generated__/pokemonDetailPage_pokemon.graphql';
+import type { pokemonDetailPageCaught$key } from '~/__generated__/pokemonDetailPageCaught.graphql';
 import type { pokemonDetailPageQuery } from '~/__generated__/pokemonDetailPageQuery.graphql';
 import { Button } from '~/components/ui/button';
 import {
@@ -56,7 +56,7 @@ function PokemonDetails({
         name
         primaryType
         secondaryType
-        ...pokemonDetailPage_caughtPokemon
+        ...pokemonDetailPageCaught
       }
     `,
     pokemon,
@@ -110,14 +110,16 @@ function PokemonCaughtInstances({
   pokemon,
   userId,
 }: {
-  pokemon: pokemonDetailPage_caughtPokemon$key;
+  pokemon: pokemonDetailPageCaught$key;
   userId?: string;
 }) {
   const data = useFragment(
     graphql`
-      fragment pokemonDetailPage_caughtPokemon on Pokemon {
+      fragment pokemonDetailPageCaught on Pokemon {
         id
-        caughtPokemons {
+        caughtPokemons(first: 100) @connection(key: 
+        "pokemonDetailPageCaught__caughtPokemons") {
+          __id
           edges {
             node {
               id
@@ -127,6 +129,7 @@ function PokemonCaughtInstances({
             }
           }
         }
+        name
       }
     `,
     pokemon,
@@ -140,6 +143,7 @@ function PokemonCaughtInstances({
   return (
     <div className="space-y-3">
       <h2 className="text-lg font-semibold">Caught by you</h2>
+      <div>{data.caughtPokemons.__id}</div>
       <div className="grid gap-3 lg:grid-cols-2">
         {data.caughtPokemons.edges.map((edge) => {
           if (!edge?.node) {
