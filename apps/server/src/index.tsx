@@ -5,7 +5,7 @@ import parseInteger from '@nkzw/core/parseInteger.js';
 import { createYoga } from 'graphql-yoga';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { Context } from './graphql/context.tsx';
+import type { Context } from './graphql/context.tsx';
 import schema from './graphql/schema.tsx';
 import { auth } from './lib/auth.tsx';
 import env from './lib/env.tsx';
@@ -69,18 +69,12 @@ app.on(['POST', 'GET', 'OPTIONS'], '/graphql/*', async (context) => {
 
 app.all('/*', (context) => context.redirect(origin));
 
-serve({ fetch: app.fetch, port }, () =>
-  console.log(
-    `${styleText(['green', 'bold'], `${name}\n  ➜`)}  Server running on port ${styleText('bold', String(port))}.\n`,
-  ),
-);
+if (process.env.NODE_ENV === 'development') {
+  serve({ fetch: app.fetch, port }, () =>
+    console.log(
+      `${styleText(['green', 'bold'], `${name}\n  ➜`)}  Server running on port ${styleText('bold', String(port))}.\n`,
+    ),
+  );
+}
 
-const setTitle = (title: string) => {
-  process.title = title;
-  if (process.stdout.isTTY) {
-    process.stdout.write(
-      `${String.fromCharCode(27)}]0;🚀 ${title}${String.fromCharCode(7)}`,
-    );
-  }
-};
-setTimeout(() => setTitle(name), 0);
+export default app;

@@ -13,6 +13,7 @@
     "dev": "mkdir -p src/__generated__ && concurrently \"relay-compiler --watch\" \"next dev --turbopack\"",
     "format": "biome format --write .",
     "lint": "biome lint src --write",
+    "tc": "tsc --noEmit",
     "relay": "mkdir -p src/__generated__ && relay-compiler"
   },
   "browserslist": [

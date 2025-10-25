@@ -1,4 +1,4 @@
-import { User } from '../prisma/prisma-client/client.ts';
+import type { User } from '../prisma/prisma-client/client.ts';
 
 export type SessionUser = Pick<User, 'role' | 'id' | 'username'>;
 

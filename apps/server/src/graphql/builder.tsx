@@ -4,10 +4,10 @@ import DirectivesPlugin from '@pothos/plugin-directives';
 import PrismaPlugin from '@pothos/plugin-prisma';
 import RelayPlugin from '@pothos/plugin-relay';
 import ScopeAuthPlugin from '@pothos/plugin-scope-auth';
-import PrismaTypes from '../prisma/pothos-types.ts';
+import type PrismaTypes from '../prisma/pothos-types.ts';
 import prisma from '../prisma/prisma.tsx';
 import isAdmin from '../user/isAdmin.tsx';
-import { Context } from './context.tsx';
+import type { Context } from './context.tsx';
 import AuthDirectivesPlugin from './lib/authDirectives.tsx';
 import decodeGlobalID from './lib/decodeGlobalID.tsx';
 import encodeGlobalID from './lib/encodeGlobalID.tsx';
@@ -53,7 +53,7 @@ const builder = new SchemaBuilder<PothosTypes>({
     clientMutationId: 'omit',
     cursorType: 'String',
     decodeGlobalID,
-    // @ts-ignore
+    // @ts-expect-error
     encodeGlobalID,
     nodesQueryOptions: false,
   },
